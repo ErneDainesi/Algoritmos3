@@ -1,2 +1,3 @@
 # Algoritmos y Programación III
-## Ernesto Dainesi (104346), Mariano Fortunato Rossi ()
+## Ernesto Emilio Dainesi Perrot (104346)
+## Mariano Fortunato Rossi ()
