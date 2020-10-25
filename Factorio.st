@@ -1,3 +1,48 @@
+!classDefinition: #CintaAzul category: 'Factorio'!
+DenotativeObject subclass: #CintaAzul
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Factorio'!
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'CintaAzul class' category: 'Factorio'!
+CintaAzul class
+	instanceVariableNames: 'destino contenido'!
+
+!CintaAzul class methodsFor: 'as yet unclassified' stamp: 'EDP 10/25/2020 17:23:44'!
+agregar: unaMena
+	contenido add: unaMena.! !
+
+!CintaAzul class methodsFor: 'as yet unclassified' stamp: 'EDP 10/25/2020 17:23:44'!
+cantidadDeMenas
+	^contenido size.! !
+
+!CintaAzul class methodsFor: 'as yet unclassified' stamp: 'EDP 10/25/2020 17:23:44'!
+conectarA: unDestino
+	destino := unDestino.! !
+
+!CintaAzul class methodsFor: 'as yet unclassified' stamp: 'EDP 10/25/2020 17:24:03'!
+initializeCollaboratorsFromFile
+	"Auto generated method for loading purposes - Do not modify it"
+
+	destino := Contenedor.
+	contenido := ((OrderedCollection new)).! !
+
+!CintaAzul class methodsFor: 'as yet unclassified' stamp: 'EDP 10/25/2020 17:23:44'!
+preparar
+	contenido := OrderedCollection new.! !
+
+!CintaAzul class methodsFor: 'as yet unclassified' stamp: 'EDP 10/25/2020 17:23:44'!
+transportar
+	(self cantidadDeMenas = 0) ifFalse: [destino agregar: contenido removeFirst].! !
+
+!CintaAzul class methodsFor: 'as yet unclassified' stamp: 'EDP 10/25/2020 17:23:44'!
+transportarTodo
+	[self cantidadDeMenas  > 0] whileTrue: [destino agregar: contenido removeFirst].! !
+
+
 !classDefinition: #CintaRoja category: 'Factorio'!
 DenotativeObject subclass: #CintaRoja
 	instanceVariableNames: ''
@@ -23,7 +68,7 @@ cantidadDeMenas
 conectarA: unDestino
 	destino := unDestino.! !
 
-!CintaRoja class methodsFor: 'as yet unclassified' stamp: 'MFR 10/25/2020 17:16:14'!
+!CintaRoja class methodsFor: 'as yet unclassified' stamp: 'EDP 10/25/2020 17:24:03'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -68,7 +113,7 @@ cantidadDe: unaMenaDeMuestra
 cantidadDeMenas
 	^contenido size.! !
 
-!Contenedor class methodsFor: 'as yet unclassified' stamp: 'MFR 10/25/2020 17:16:14'!
+!Contenedor class methodsFor: 'as yet unclassified' stamp: 'EDP 10/25/2020 17:24:03'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -100,7 +145,7 @@ conectarA: unDestino
 extraer
 	destino agregar: #carbon.! !
 
-!ExtractorDeCarbon class methodsFor: 'as yet unclassified' stamp: 'MFR 10/25/2020 17:16:14'!
+!ExtractorDeCarbon class methodsFor: 'as yet unclassified' stamp: 'EDP 10/25/2020 17:24:03'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -128,7 +173,7 @@ conectarA: unDestino
 extraer
 	destino agregar: #hierro.! !
 
-!ExtractorDeHierro class methodsFor: 'as yet unclassified' stamp: 'MFR 10/25/2020 17:16:14'!
+!ExtractorDeHierro class methodsFor: 'as yet unclassified' stamp: 'EDP 10/25/2020 17:24:03'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -228,6 +273,7 @@ test03ExtractorExtractorCintaCintaCaja
 	Assert that: Contenedor cantidadDeMenas isEqualTo: 2.
 	"Tambien tenemos que chequear que no haya nada en las cintas"! !
 
+CintaAzul initializeAfterFileIn!
 CintaRoja initializeAfterFileIn!
 Contenedor initializeAfterFileIn!
 ExtractorDeCarbon initializeAfterFileIn!
