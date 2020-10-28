@@ -23,7 +23,11 @@ cantidadDeMenas
 conectarA: unDestino
 	destino := unDestino.! !
 
-!CintaAzul class methodsFor: 'as yet unclassified' stamp: 'EDP 10/25/2020 17:24:03'!
+!CintaAzul class methodsFor: 'as yet unclassified' stamp: 'MFR 10/28/2020 13:00:05'!
+desconectar
+	destino := nil.! !
+
+!CintaAzul class methodsFor: 'as yet unclassified' stamp: 'MFR 10/28/2020 13:02:35'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -68,7 +72,11 @@ cantidadDeMenas
 conectarA: unDestino
 	destino := unDestino.! !
 
-!CintaRoja class methodsFor: 'as yet unclassified' stamp: 'EDP 10/25/2020 17:24:03'!
+!CintaRoja class methodsFor: 'as yet unclassified' stamp: 'MFR 10/28/2020 13:00:13'!
+desconectar
+	destino := nil.! !
+
+!CintaRoja class methodsFor: 'as yet unclassified' stamp: 'MFR 10/28/2020 13:02:35'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -113,11 +121,11 @@ cantidadDe: unaMenaDeMuestra
 cantidadDeMenas
 	^contenido size.! !
 
-!Contenedor class methodsFor: 'as yet unclassified' stamp: 'EDP 10/25/2020 17:24:03'!
+!Contenedor class methodsFor: 'as yet unclassified' stamp: 'MFR 10/28/2020 13:02:35'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
-	contenido := ((OrderedCollection new) add: #carbon; add: #carbon; add: #carbon; yourself).! !
+	contenido := ((OrderedCollection new) add: #carbon; yourself).! !
 
 !Contenedor class methodsFor: 'as yet unclassified' stamp: 'SF 10/23/2020 00:35:51'!
 vaciar
@@ -141,15 +149,19 @@ ExtractorDeCarbon class
 conectarA: unDestino
 	destino := unDestino.! !
 
+!ExtractorDeCarbon class methodsFor: 'as yet unclassified' stamp: 'MFR 10/28/2020 13:00:18'!
+desconectar
+	destino := nil.! !
+
 !ExtractorDeCarbon class methodsFor: 'as yet unclassified' stamp: 'SF 10/23/2020 00:33:50'!
 extraer
 	destino agregar: #carbon.! !
 
-!ExtractorDeCarbon class methodsFor: 'as yet unclassified' stamp: 'EDP 10/25/2020 17:24:03'!
+!ExtractorDeCarbon class methodsFor: 'as yet unclassified' stamp: 'MFR 10/28/2020 13:02:35'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
-	destino := CintaRoja.! !
+	destino := CintaAzul.! !
 
 
 !classDefinition: #ExtractorDeHierro category: 'Factorio'!
@@ -169,11 +181,15 @@ ExtractorDeHierro class
 conectarA: unDestino
 	destino := unDestino.! !
 
+!ExtractorDeHierro class methodsFor: 'as yet unclassified' stamp: 'MFR 10/28/2020 13:00:24'!
+desconectar
+	destino := nil.! !
+
 !ExtractorDeHierro class methodsFor: 'as yet unclassified' stamp: 'MFR 10/25/2020 16:24:30'!
 extraer
 	destino agregar: #hierro.! !
 
-!ExtractorDeHierro class methodsFor: 'as yet unclassified' stamp: 'EDP 10/25/2020 17:24:03'!
+!ExtractorDeHierro class methodsFor: 'as yet unclassified' stamp: 'MFR 10/28/2020 13:02:35'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -216,21 +232,27 @@ test01ExtractorCaja
 	Assert that: Contenedor cantidadDeMenas isEqualTo: 1.! !
 
 
-!FactorioTest class methodsFor: 'escenario 2' stamp: 'SF 10/23/2020 01:01:34'!
+!FactorioTest class methodsFor: 'escenario 2' stamp: 'MFR 10/28/2020 13:00:58'!
 configurarCircuitoExtractorCintaCaja
-
+	"Preparamos los objetos"
 	Contenedor vaciar.
-	"No se olviden de vaciar la cinta tambien!!"
-	"Conectamos el extractor a la cinta, luego conectamos la cinta a la caja"
+	CintaAzul preparar. "Sirve para vaciar la cinta"
+	
+	"Realizamos las conexiones necesarias"
+	ExtractorDeCarbon conectarA: CintaAzul.
+	CintaAzul conectarA: Contenedor.
 ! !
 
-!FactorioTest class methodsFor: 'escenario 2' stamp: 'SF 10/23/2020 00:13:25'!
+!FactorioTest class methodsFor: 'escenario 2' stamp: 'MFR 10/28/2020 13:01:15'!
 hacerAndarCircuitoExtractorCintaCaja
 
-	"Hacemos andar el extractor, asi deja un carbon en la cinta.
-	Luego hacemos andar la cinta (con algun mensaje) y deberia dejar el carbon en la caja.	"! !
+	"Hacemos andar el extractor, asi deja un carbon en la cinta."
+	ExtractorDeCarbon extraer.
+	
+	"Luego hacemos andar la cinta y deberia dejar el carbon en la caja.	"
+	CintaAzul transportar.! !
 
-!FactorioTest class methodsFor: 'escenario 2' stamp: 'SF 10/23/2020 00:58:33'!
+!FactorioTest class methodsFor: 'escenario 2' stamp: 'MFR 10/28/2020 13:01:26'!
 test02ExtractorCintaCaja
 	self configurarCircuitoExtractorCintaCaja.
 	
@@ -238,7 +260,7 @@ test02ExtractorCintaCaja
 	
 	Assert that: (Contenedor cantidadDe: #carbon) isEqualTo: 1.
 	Assert that: Contenedor cantidadDeMenas isEqualTo: 1.
-	"Tambien tenemos que chequear que en la cinta no haya nada. Cero carbon."! !
+	Assert that: CintaAzul cantidadDeMenas isEqualTo: 0.! !
 
 
 !FactorioTest class methodsFor: 'escenario 3' stamp: 'SF 10/23/2020 01:01:20'!
