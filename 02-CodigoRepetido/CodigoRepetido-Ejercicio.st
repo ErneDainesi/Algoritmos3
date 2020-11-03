@@ -21,38 +21,31 @@ TestCase subclass: #CustomerBookTest
 	poolDictionaries: ''
 	category: 'CodigoRepetido-Ejercicio'!
 
-!CustomerBookTest methodsFor: 'tests' stamp: 'NR 4/3/2019 10:50:19'!
+!CustomerBookTest methodsFor: 'tests' stamp: 'EDP 11/3/2020 15:15:19'!
 test01AddingCustomerShouldNotTakeMoreThan50Milliseconds
 
-	| customerBook millisecondsBeforeRunning millisecondsAfterRunning |
+	| customerBook addCustomerJohnLennon |
 	
 	customerBook := CustomerBook new.
 	
-	millisecondsBeforeRunning := Time millisecondClockValue * millisecond.
-	customerBook addCustomerNamed: 'John Lennon'.
-	millisecondsAfterRunning := Time millisecondClockValue * millisecond.
-	
-	self assert: (millisecondsAfterRunning-millisecondsBeforeRunning) < (50 * millisecond)
-	
-! !
+	addCustomerJohnLennon := [customerBook addCustomerNamed: 'John Lennon'.].
 
-!CustomerBookTest methodsFor: 'tests' stamp: 'NR 4/3/2019 10:50:13'!
+	self action: addCustomerJohnLennon  shouldNotTakeMoreThan: 50.! !
+
+!CustomerBookTest methodsFor: 'tests' stamp: 'EDP 11/3/2020 15:16:31'!
 test02RemovingCustomerShouldNotTakeMoreThan100Milliseconds
 
-	| customerBook millisecondsBeforeRunning millisecondsAfterRunning paulMcCartney |
+	| customerBook paulMcCartney removeCustomerPaulMcCartney |
 	
 	customerBook := CustomerBook new.
+	
 	paulMcCartney := 'Paul McCartney'.
 	
 	customerBook addCustomerNamed: paulMcCartney.
-	  
-	millisecondsBeforeRunning := Time millisecondClockValue * millisecond.
-	customerBook removeCustomerNamed: paulMcCartney.
-	millisecondsAfterRunning := Time millisecondClockValue * millisecond.
 	
-	self assert: (millisecondsAfterRunning-millisecondsBeforeRunning) < (100 * millisecond)
-	
-! !
+	removeCustomerPaulMcCartney := [customerBook removeCustomerNamed: paulMcCartney.].
+
+	self action: removeCustomerPaulMcCartney  shouldNotTakeMoreThan: 100.! !
 
 !CustomerBookTest methodsFor: 'tests' stamp: 'HernanWilkinson 5/9/2012 18:12'!
 test03CanNotAddACustomerWithEmptyName 
@@ -160,6 +153,18 @@ test08CanNotSuspendAnAlreadySuspendedCustomer
 			self assert: customerBook numberOfCustomers = 1.
 			self assert: (customerBook includesCustomerNamed: johnLennon) ]
 ! !
+
+
+!CustomerBookTest methodsFor: 'testHelpers' stamp: 'EDP 11/3/2020 15:14:06'!
+action: anAction shouldNotTakeMoreThan: timeLimit
+	
+	| millisecondsBeforeRunning millisecondsAfterRunning |
+	
+	millisecondsBeforeRunning := Time millisecondClockValue * millisecond.
+	anAction.
+	millisecondsAfterRunning := Time millisecondClockValue * millisecond.
+	
+	self assert: (millisecondsAfterRunning-millisecondsBeforeRunning) < (timeLimit * millisecond).! !
 
 
 !classDefinition: #CustomerBook category: 'CodigoRepetido-Ejercicio'!
