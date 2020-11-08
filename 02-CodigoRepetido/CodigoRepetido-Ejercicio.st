@@ -47,36 +47,34 @@ test02RemovingCustomerShouldNotTakeMoreThan100Milliseconds
 
 	self action: removeCustomerPaulMcCartney  shouldNotTakeMoreThan: 100.! !
 
-!CustomerBookTest methodsFor: 'tests' stamp: 'HernanWilkinson 5/9/2012 18:12'!
+!CustomerBookTest methodsFor: 'tests' stamp: 'MFR 11/8/2020 19:22:14'!
 test03CanNotAddACustomerWithEmptyName 
 
-	| customerBook |
+	| customerBook addACustomerWithEmptyName solutionForErrorWhileAddingCustomer |
 			
 	customerBook := CustomerBook new.
+	
+	addACustomerWithEmptyName := [customerBook addCustomerNamed: ''. self fail].
+	solutionForErrorWhileAddingCustomer := [ :anError | 
+										self assert: anError messageText = CustomerBook customerCanNotBeEmptyErrorMessage.
+										self assert: customerBook isEmpty ].
+	
+	self canNotDo: addACustomerWithEmptyName errorHandling: Error solveErrorWith: solutionForErrorWhileAddingCustomer.! !
 
-	[ customerBook addCustomerNamed: ''.
-	self fail ]
-		on: Error 
-		do: [ :anError | 
-			self assert: anError messageText = CustomerBook customerCanNotBeEmptyErrorMessage.
-			self assert: customerBook isEmpty ]! !
-
-!CustomerBookTest methodsFor: 'tests' stamp: 'HAW 8/28/2017 08:57:25'!
+!CustomerBookTest methodsFor: 'tests' stamp: 'MFR 11/8/2020 19:26:00'!
 test04CanNotRemoveAnInvalidCustomer
 	
-	| customerBook johnLennon |
+	| customerBook johnLennon removeAnInvalidCustomer solutionForErrorWhileRemovingCustomer |
 			
 	customerBook := CustomerBook new.
 	johnLennon := 'John Lennon'.
 	customerBook addCustomerNamed: johnLennon.
 	
-	[ customerBook removeCustomerNamed: 'Paul McCartney'.
-	self fail ]
-		on: NotFound 
-		do: [ :anError | 
-			self assert: customerBook numberOfCustomers = 1.
-			self assert: (customerBook includesCustomerNamed: johnLennon) ]
-! !
+	removeAnInvalidCustomer := [ customerBook removeCustomerNamed: 'Paul McCartney'. self fail ].
+	solutionForErrorWhileRemovingCustomer := [ self assert: customerBook numberOfCustomers = 1.
+										  self assert: (customerBook includesCustomerNamed: johnLennon) ].
+										
+	self canNotDo: removeAnInvalidCustomer errorHandling: NotFound solveErrorWith: solutionForErrorWhileRemovingCustomer.! !
 
 !CustomerBookTest methodsFor: 'tests' stamp: 'NR 4/3/2019 10:50:25'!
 test05SuspendingACustomerShouldNotRemoveItFromCustomerBook
@@ -166,6 +164,10 @@ action: anAction shouldNotTakeMoreThan: timeLimit
 	
 	self assert: (millisecondsAfterRunning-millisecondsBeforeRunning) < (timeLimit * millisecond).! !
 
+!CustomerBookTest methodsFor: 'testHelpers' stamp: 'MFR 11/8/2020 19:17:28'!
+canNotDo: anAction errorHandling: anExpectedError solveErrorWith: errorSolution
+	anAction on: anExpectedError do: errorSolution.! !
+
 
 !classDefinition: #CustomerBook category: 'CodigoRepetido-Ejercicio'!
 Object subclass: #CustomerBook
@@ -181,37 +183,21 @@ initialize
 	suspended:= OrderedCollection new.! !
 
 
-!CustomerBook methodsFor: 'customer management' stamp: 'NR 4/3/2019 10:14:26'!
+!CustomerBook methodsFor: 'customer management' stamp: 'MFR 11/8/2020 20:49:33'!
 addCustomerNamed: aName
 
 	aName isEmpty ifTrue: [ self signalCustomerNameCannotBeEmpty ].
-	((active includes: aName) or: [suspended includes: aName]) ifTrue: [ self signalCustomerAlreadyExists ].
-	
+	(self includesCustomerNamed: aName) ifTrue: [ self signalCustomerAlreadyExists ].
 	active add: aName ! !
 
-!CustomerBook methodsFor: 'customer management' stamp: 'NR 4/3/2019 10:14:26'!
+!CustomerBook methodsFor: 'customer management' stamp: 'MFR 11/8/2020 20:46:30'!
 removeCustomerNamed: aName 
- 
-	1 to: active size do: 
-	[ :index |
-		aName = (active at: index)
-			ifTrue: [
-				active removeAt: index.
-				^ aName 
-			] 
-	].
-
-	1 to: suspended size do: 	
-	[ :index |
-		aName = (suspended at: index)
-			ifTrue: [
-				suspended removeAt: index.
-				^ aName 
-			] 
-	].
-	
-	^ NotFound signal.
-! !
+	| customerRemoved |
+	customerRemoved  := self removeCustomerNamed: aName from: active.
+	customerRemoved ifNotNil: [^aName].
+	customerRemoved := self removeCustomerNamed: aName from: suspended.
+	customerRemoved ifNotNil: [^aName].
+	^ NotFound signal.! !
 
 !CustomerBook methodsFor: 'customer management' stamp: 'NR 4/3/2019 10:14:26'!
 suspendCustomerNamed: aName 
@@ -229,10 +215,10 @@ numberOfActiveCustomers
 	
 	^active size! !
 
-!CustomerBook methodsFor: 'accessing' stamp: 'NR 4/3/2019 10:14:26'!
+!CustomerBook methodsFor: 'accessing' stamp: 'MFR 11/8/2020 20:19:40'!
 numberOfCustomers
 	
-	^active size + suspended size! !
+	^self numberOfActiveCustomers + self numberOfSuspendedCustomers ! !
 
 !CustomerBook methodsFor: 'accessing' stamp: 'NR 9/19/2018 17:36:09'!
 numberOfSuspendedCustomers
@@ -260,6 +246,19 @@ signalCustomerAlreadyExists
 signalCustomerNameCannotBeEmpty 
 
 	self error: self class customerCanNotBeEmptyErrorMessage ! !
+
+
+!CustomerBook methodsFor: 'customer	BookHelpers' stamp: 'MFR 11/8/2020 20:40:02'!
+removeCustomerNamed: aName from: customerBookGroup
+	1 to: customerBookGroup size do:
+		[ :index | 
+			aName = (customerBookGroup at: index)
+				ifTrue: [
+					customerBookGroup removeAt: index.
+					^aName
+				]
+	].
+	^nil.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
