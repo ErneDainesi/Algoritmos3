@@ -76,80 +76,54 @@ test04CanNotRemoveAnInvalidCustomer
 										
 	self canNotDo: removeAnInvalidCustomer errorHandling: NotFound solveErrorWith: solutionForErrorWhileRemovingCustomer.! !
 
-!CustomerBookTest methodsFor: 'tests' stamp: 'NR 4/3/2019 10:50:25'!
+!CustomerBookTest methodsFor: 'tests' stamp: 'EDP 11/9/2020 00:32:12'!
 test05SuspendingACustomerShouldNotRemoveItFromCustomerBook
 
-	| customerBook paulMcCartney|
+	|customerBook|
 	
-	customerBook := CustomerBook new.
-	paulMcCartney := 'Paul McCartney'.
+	customerBook := self initCustomerBookForTests0506.
+	self manageSuspendedCustomer: 1 from: customerBook.
 	
-	customerBook addCustomerNamed: paulMcCartney.
-	customerBook suspendCustomerNamed: paulMcCartney.
-	
-	self assert: 0 equals: customerBook numberOfActiveCustomers.
-	self assert: 1 equals: customerBook numberOfSuspendedCustomers.
-	self assert: 1 equals: customerBook numberOfCustomers.
-	self assert: (customerBook includesCustomerNamed: paulMcCartney).
+	self assert: (customerBook includesCustomerNamed: 'Paul McCartney').
 	
 
 	
 ! !
 
-!CustomerBookTest methodsFor: 'tests' stamp: 'NR 4/3/2019 10:50:28'!
+!CustomerBookTest methodsFor: 'tests' stamp: 'EDP 11/9/2020 00:33:11'!
 test06RemovingASuspendedCustomerShouldRemoveItFromCustomerBook
 
-	| customerBook paulMcCartney|
+	|customerBook|
 	
-	customerBook := CustomerBook new.
-	paulMcCartney := 'Paul McCartney'.
+	customerBook := self initCustomerBookForTests0506.
 	
-	customerBook addCustomerNamed: paulMcCartney.
-	customerBook suspendCustomerNamed: paulMcCartney.
-	customerBook removeCustomerNamed: paulMcCartney.
-	
-	self assert: 0 equals: customerBook numberOfActiveCustomers.
-	self assert: 0 equals: customerBook numberOfSuspendedCustomers.
-	self assert: 0 equals: customerBook numberOfCustomers.
-	self deny: (customerBook includesCustomerNamed: paulMcCartney).
-
+	customerBook removeCustomerNamed: 'Paul McCartney'.
+	self manageSuspendedCustomer: 0 from: customerBook.
+	self deny: (customerBook includesCustomerNamed: 'Paul McCartney').
 
 	
 ! !
 
-!CustomerBookTest methodsFor: 'tests' stamp: 'NR 4/30/2020 09:08:46'!
+!CustomerBookTest methodsFor: 'tests' stamp: 'EDP 11/9/2020 00:45:06'!
 test07CanNotSuspendAnInvalidCustomer
 	
-	| customerBook johnLennon |
-			
-	customerBook := CustomerBook new.
-	johnLennon := 'John Lennon'.
-	customerBook addCustomerNamed: johnLennon.
+	|customerBook|
 	
-	[ customerBook suspendCustomerNamed: 'Ringo Starr'.
-	self fail ]
-		on: CantSuspend 
-		do: [ :anError | 
-			self assert: customerBook numberOfCustomers = 1.
-			self assert: (customerBook includesCustomerNamed: johnLennon) ]
+	customerBook := self initCustomerBookForTests0708.
+	
+	self canNotSuspend: 'Ringo Starr' from: customerBook.
 ! !
 
-!CustomerBookTest methodsFor: 'tests' stamp: 'NR 9/19/2018 17:57:11'!
+!CustomerBookTest methodsFor: 'tests' stamp: 'EDP 11/9/2020 00:44:58'!
 test08CanNotSuspendAnAlreadySuspendedCustomer
+
+	|customerBook johnLennon|
 	
-	| customerBook johnLennon |
-			
-	customerBook := CustomerBook new.
 	johnLennon := 'John Lennon'.
-	customerBook addCustomerNamed: johnLennon.
+	customerBook := self initCustomerBookForTests0708.
 	customerBook suspendCustomerNamed: johnLennon.
 	
-	[ customerBook suspendCustomerNamed: johnLennon.
-	self fail ]
-		on: CantSuspend 
-		do: [ :anError | 
-			self assert: customerBook numberOfCustomers = 1.
-			self assert: (customerBook includesCustomerNamed: johnLennon) ]
+	self canNotSuspend: johnLennon from: customerBook.
 ! !
 
 
@@ -167,6 +141,46 @@ action: anAction shouldNotTakeMoreThan: timeLimit
 !CustomerBookTest methodsFor: 'testHelpers' stamp: 'MFR 11/8/2020 19:17:28'!
 canNotDo: anAction errorHandling: anExpectedError solveErrorWith: errorSolution
 	anAction on: anExpectedError do: errorSolution.! !
+
+!CustomerBookTest methodsFor: 'testHelpers' stamp: 'EDP 11/9/2020 00:45:24'!
+canNotSuspend: customer from: customerBook
+	
+	[ customerBook suspendCustomerNamed: customer.
+	self fail ]
+		on: CantSuspend 
+		do: [ self assert: customerBook numberOfCustomers = 1.
+			self assert: (customerBook includesCustomerNamed: 'John Lennon') ]! !
+
+!CustomerBookTest methodsFor: 'testHelpers' stamp: 'EDP 11/9/2020 00:31:09'!
+initCustomerBookForTests0506
+
+	| customerBook paulMcCartney|
+	
+	paulMcCartney := 'Paul McCartney'.
+	
+	customerBook := CustomerBook new.
+	customerBook addCustomerNamed: paulMcCartney.
+	customerBook suspendCustomerNamed: paulMcCartney.
+	
+	^customerBook.! !
+
+!CustomerBookTest methodsFor: 'testHelpers' stamp: 'EDP 11/9/2020 00:33:55'!
+initCustomerBookForTests0708
+
+	| customerBook johnLennon |
+			
+	customerBook := CustomerBook new.
+	johnLennon := 'John Lennon'.
+	customerBook addCustomerNamed: johnLennon.
+	
+	^customerBook.! !
+
+!CustomerBookTest methodsFor: 'testHelpers' stamp: 'EDP 11/9/2020 00:14:22'!
+manageSuspendedCustomer: customerQuantity from: customerBook
+	
+	self assert: 0 equals: customerBook numberOfActiveCustomers.
+	self assert: customerQuantity equals: customerBook numberOfSuspendedCustomers.
+	self assert: customerQuantity equals: customerBook numberOfCustomers.! !
 
 
 !classDefinition: #CustomerBook category: 'CodigoRepetido-Ejercicio'!
