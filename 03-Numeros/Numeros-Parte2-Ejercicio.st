@@ -1,4 +1,4 @@
-!classDefinition: #NumeroTest category: #'Numeros-Parte2-Ejercicio'!
+!classDefinition: #NumeroTest category: 'Numeros-Parte2-Ejercicio'!
 TestCase subclass: #NumeroTest
 	instanceVariableNames: 'zero one two four oneFifth oneHalf five twoFifth twoTwentyfifth fiveHalfs three eight negativeOne negativeTwo'
 	classVariableNames: ''
@@ -287,7 +287,7 @@ setUp
 	! !
 
 
-!classDefinition: #Numero category: #'Numeros-Parte2-Ejercicio'!
+!classDefinition: #Numero category: 'Numeros-Parte2-Ejercicio'!
 Object subclass: #Numero
 	instanceVariableNames: ''
 	classVariableNames: ''
@@ -343,7 +343,7 @@ invalidNumberType
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-!classDefinition: 'Numero class' category: #'Numeros-Parte2-Ejercicio'!
+!classDefinition: 'Numero class' category: 'Numeros-Parte2-Ejercicio'!
 Numero class
 	instanceVariableNames: ''!
 
@@ -357,34 +357,61 @@ invalidNumberTypeErrorDescription
 	^ 'Tipo de Número Inválido'! !
 
 
-!classDefinition: #Entero category: #'Numeros-Parte2-Ejercicio'!
+!classDefinition: #Entero category: 'Numeros-Parte2-Ejercicio'!
 Numero subclass: #Entero
 	instanceVariableNames: 'value'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Numeros-Parte2-Ejercicio'!
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'HernanWilkinson 5/7/2016 23:13'!
+!Entero methodsFor: 'arithmetic operations' stamp: 'MFR 11/11/2020 21:08:34'!
 * aMultiplier 
 	
-	^self class with: value * aMultiplier integerValue
-	! !
+	(aMultiplier isKindOf: Entero) ifTrue: [^Entero with: value * aMultiplier integerValue].
+	(aMultiplier isKindOf: Fraccion) ifTrue: [
+		| newNumerator newDenominator |
+		newNumerator := Entero with: (value * aMultiplier numerator integerValue).
+		newDenominator := Entero with: aMultiplier denominator integerValue.
+		^Fraccion with: newNumerator over: newDenominator
+	].
+	^self error: 'aMultiplier es de un tipo no soportado'.	! !
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'HernanWilkinson 5/7/2016 23:13'!
+!Entero methodsFor: 'arithmetic operations' stamp: 'MFR 11/11/2020 21:09:02'!
 + anAdder 
-	
-	^self class with: value + anAdder integerValue
+
+	(anAdder isKindOf: Entero) ifTrue: [^Entero with: value + anAdder integerValue].
+	(anAdder isKindOf: Fraccion) ifTrue: [
+		| newNumerator newDenominator |
+		newNumerator := self * anAdder denominator + anAdder numerator .
+		newDenominator := anAdder denominator.
+		^Fraccion with: newNumerator over: newDenominator.
+	].
+	^self error: 'anAdder es de un tipo no soportado'.
 ! !
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'NR 9/23/2018 23:40:37'!
+!Entero methodsFor: 'arithmetic operations' stamp: 'MFR 11/11/2020 21:09:26'!
 - aSubtrahend 
-	
-	^ self class with: value - aSubtrahend integerValue.! !
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'HernanWilkinson 5/7/2016 23:14'!
+	(aSubtrahend isKindOf: Entero) ifTrue: [^Entero with: value - aSubtrahend integerValue].
+	(aSubtrahend isKindOf: Fraccion) ifTrue: [
+		| newNumerator newDenominator |
+		newNumerator := self * aSubtrahend denominator - aSubtrahend numerator .
+		newDenominator := aSubtrahend denominator.
+		^Fraccion with: newNumerator over: newDenominator.
+	].
+	^self error: 'aSubtrahend es de un tipo no soportado'.! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'MFR 11/11/2020 21:09:42'!
 / aDivisor 
 	
-	^Fraccion with: self over: aDivisor! !
+	(aDivisor isKindOf: Entero) ifTrue: [^Fraccion with: self over: aDivisor].
+	(aDivisor isKindOf: Fraccion) ifTrue: [
+		| newNumerator newDenominator |
+		newNumerator := Entero with: (value * aDivisor denominator integerValue).
+		newDenominator := Entero with: aDivisor numerator integerValue.
+		^Fraccion with: newNumerator over: newDenominator.
+	].
+	^self error: 'anDivisor es de un tipo no soportado'.! !
 
 !Entero methodsFor: 'arithmetic operations' stamp: 'HAW 9/24/2018 08:47:50'!
 fibonacci
@@ -460,7 +487,7 @@ greatestCommonDivisorWith: anEntero
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-!classDefinition: 'Entero class' category: #'Numeros-Parte2-Ejercicio'!
+!classDefinition: 'Entero class' category: 'Numeros-Parte2-Ejercicio'!
 Entero class
 	instanceVariableNames: ''!
 
@@ -477,44 +504,56 @@ with: aValue
 	^self new initalizeWith: aValue! !
 
 
-!classDefinition: #Fraccion category: #'Numeros-Parte2-Ejercicio'!
+!classDefinition: #Fraccion category: 'Numeros-Parte2-Ejercicio'!
 Numero subclass: #Fraccion
 	instanceVariableNames: 'numerator denominator'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Numeros-Parte2-Ejercicio'!
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'HernanWilkinson 5/7/2016 23:14'!
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'MFR 11/11/2020 20:24:43'!
 * aMultiplier 
-	
-	^(numerator * aMultiplier numerator) / (denominator * aMultiplier denominator)
-	! !
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'HernanWilkinson 5/7/2016 23:14'!
+	(aMultiplier isKindOf: Entero) ifTrue: [^(aMultiplier * numerator) / denominator].
+	(aMultiplier isKindOf: Fraccion) ifTrue: [^(aMultiplier numerator * numerator) / (aMultiplier denominator * denominator)].
+	^self error: 'aMultiplier es de un tipo no soportado'.	! !
+
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'MFR 11/11/2020 21:11:12'!
 + anAdder 
-	
 	| newNumerator newDenominator |
-	
-	newNumerator := (numerator * anAdder denominator) + (denominator * anAdder numerator).
-	newDenominator := denominator * anAdder denominator.
-	
-	^newNumerator / newDenominator ! !
+	(anAdder isKindOf: Entero) ifTrue: [
+		newNumerator := (anAdder * denominator) + numerator.
+		^newNumerator / denominator.
+	].
+	(anAdder isKindOf: Fraccion) ifTrue: [ 
+		newNumerator := (numerator * anAdder denominator) + (denominator * anAdder numerator).	
+		newDenominator := denominator * anAdder denominator.
+		^newNumerator / newDenominator.	
+	].
+	^self error: 'anAdder es de un tipo no soportado'. ! !
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'NR 9/23/2018 23:43:50'!
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'MFR 11/11/2020 21:10:54'!
 - aSubtrahend 
 	
 	| newNumerator newDenominator |
 	
-	newNumerator := (numerator * aSubtrahend denominator) - (denominator * aSubtrahend numerator).
-	newDenominator := denominator * aSubtrahend denominator.
-	
-	^newNumerator / newDenominator 
-! !
+	(aSubtrahend isKindOf: Entero) ifTrue: [
+		newNumerator := numerator - (aSubtrahend * denominator).
+		^Fraccion with: newNumerator over: denominator.
+	].
+	(aSubtrahend isKindOf: Fraccion) ifTrue: [
+		newNumerator := numerator * aSubtrahend denominator - denominator * aSubtrahend numerator.
+		newDenominator := denominator * aSubtrahend denominator.
+		^Fraccion with: newNumerator over: newDenominator.
+	].
+	^self error: 'aSubtrahend es de un tipo no soportado'.! !
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'HernanWilkinson 5/7/2016 23:14'!
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'MFR 11/11/2020 20:45:22'!
 / aDivisor 
 	
-	^(numerator * aDivisor denominator) / (denominator * aDivisor numerator)! !
+	(aDivisor isKindOf: Entero) ifTrue: [^Fraccion with: numerator over: denominator * aDivisor].
+	(aDivisor isKindOf: Fraccion) ifTrue: [^(numerator * aDivisor denominator) / (denominator * aDivisor numerator)].
+	^self error: 'anDivisor es de un tipo no soportado'.! !
 
 
 !Fraccion methodsFor: 'comparing' stamp: 'HernanWilkinson 5/7/2016 20:42'!
@@ -576,7 +615,7 @@ printOn: aStream
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-!classDefinition: 'Fraccion class' category: #'Numeros-Parte2-Ejercicio'!
+!classDefinition: 'Fraccion class' category: 'Numeros-Parte2-Ejercicio'!
 Fraccion class
 	instanceVariableNames: ''!
 
