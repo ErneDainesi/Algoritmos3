@@ -104,7 +104,7 @@ test15EnteroDividesFraccionCorrectly
 
 	self assert: one / twoFifth equals: fiveHalfs  ! !
 
-!NumeroTest methodsFor: 'tests' stamp: 'HernanWilkinson 5/7/2016 21:59'!
+!NumeroTest methodsFor: 'tests' stamp: 'EDP 11/15/2020 22:56:38'!
 test16FraccionDividesEnteroCorrectly
 
 	self assert: twoFifth / five equals: twoTwentyfifth ! !
@@ -364,40 +364,25 @@ Numero subclass: #Entero
 	poolDictionaries: ''
 	category: 'Numeros-Parte2-Ejercicio'!
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'MFR 11/11/2020 21:08:34'!
-* aMultiplier 
-	
-	(aMultiplier isKindOf: Entero) ifTrue: [^Entero with: value * aMultiplier integerValue].
-	(aMultiplier isKindOf: Fraccion) ifTrue: [
-		| newNumerator newDenominator |
-		newNumerator := Entero with: (value * aMultiplier numerator integerValue).
-		newDenominator := Entero with: aMultiplier denominator integerValue.
-		^Fraccion with: newNumerator over: newDenominator
-	].
-	^self error: 'aMultiplier es de un tipo no soportado'.	! !
+!Entero methodsFor: 'arithmetic operations' stamp: 'EDP 11/15/2020 23:29:09'!
+* aMultiplier
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'MFR 11/12/2020 21:03:08'!
+	^ aMultiplier multiplyWhenMultiplicandIsEntero: self.! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'EDP 11/15/2020 23:13:04'!
 + anAdder 
 	
-	^anAdder addWhenAugendIsEntero: self.
-! !
+	^anAdder addWhenAugendIsEntero: self.! !
 
 !Entero methodsFor: 'arithmetic operations' stamp: 'EDP 11/15/2020 18:38:54'!
 - aSubtrahend
 	
 	^aSubtrahend subtractWhenMinuendIsEntero: self.! !
 
-!Entero methodsFor: 'arithmetic operations' stamp: 'MFR 11/11/2020 21:09:42'!
-/ aDivisor 
+!Entero methodsFor: 'arithmetic operations' stamp: 'EDP 11/15/2020 23:04:19'!
+/ aDivisor
 	
-	(aDivisor isKindOf: Entero) ifTrue: [^Fraccion with: self over: aDivisor].
-	(aDivisor isKindOf: Fraccion) ifTrue: [
-		| newNumerator newDenominator |
-		newNumerator := Entero with: (value * aDivisor denominator integerValue).
-		newDenominator := Entero with: aDivisor numerator integerValue.
-		^Fraccion with: newNumerator over: newDenominator.
-	].
-	^self error: 'anDivisor es de un tipo no soportado'.! !
+	^aDivisor divideWhenDividendIsEntero: self.! !
 
 !Entero methodsFor: 'arithmetic operations' stamp: 'MFR 11/12/2020 20:58:43'!
 addWhenAugendIsEntero: augend
@@ -412,6 +397,25 @@ addWhenAugendIsFraccion: augend
 	newDenominator := augend denominator.
 	^Fraccion with: newNumerator over: newDenominator.! !
 
+!Entero methodsFor: 'arithmetic operations' stamp: 'EDP 11/15/2020 22:45:23'!
+divideWhenDividendIsEntero: dividend
+	
+	|newDenominator|
+	
+	newDenominator := Entero with: value.
+
+	^Fraccion with: dividend over: newDenominator.! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'EDP 11/15/2020 23:03:06'!
+divideWhenDividendIsFraccion: dividend
+	
+	|newNumerator newDenominator|
+	
+	newNumerator := Entero with: dividend numerator integerValue.
+	newDenominator := Entero with: (value * (dividend denominator integerValue)).
+	
+	^ Fraccion with: newNumerator over: newDenominator.! !
+
 !Entero methodsFor: 'arithmetic operations' stamp: 'HAW 9/24/2018 08:47:50'!
 fibonacci
 
@@ -425,6 +429,21 @@ fibonacci
 	
 	^ (self - one) fibonacci + (self - two) fibonacci
 		! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'EDP 11/15/2020 23:15:27'!
+multiplyWhenMultiplicandIsEntero: multiplicand
+
+	^Entero with: value * multiplicand integerValue.! !
+
+!Entero methodsFor: 'arithmetic operations' stamp: 'EDP 11/15/2020 23:28:37'!
+multiplyWhenMultiplicandIsFraccion: multiplicand
+
+	|newNumerator newDenominator|
+	
+	newNumerator := Entero with: value * multiplicand numerator integerValue.
+	newDenominator := Entero with: multiplicand denominator integerValue.
+
+	^Fraccion with: newNumerator over: newDenominator.! !
 
 !Entero methodsFor: 'arithmetic operations' stamp: 'EDP 11/15/2020 18:01:35'!
 subtractWhenMinuendIsEntero: minuend
@@ -523,12 +542,10 @@ Numero subclass: #Fraccion
 	poolDictionaries: ''
 	category: 'Numeros-Parte2-Ejercicio'!
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'MFR 11/11/2020 20:24:43'!
-* aMultiplier 
-
-	(aMultiplier isKindOf: Entero) ifTrue: [^(aMultiplier * numerator) / denominator].
-	(aMultiplier isKindOf: Fraccion) ifTrue: [^(aMultiplier numerator * numerator) / (aMultiplier denominator * denominator)].
-	^self error: 'aMultiplier es de un tipo no soportado'.	! !
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'EDP 11/15/2020 23:29:01'!
+* aMultiplier
+	
+	^ aMultiplier multiplyWhenMultiplicandIsFraccion: self.! !
 
 !Fraccion methodsFor: 'arithmetic operations' stamp: 'MFR 11/12/2020 21:03:29'!
 + anAdder 
@@ -540,12 +557,10 @@ Numero subclass: #Fraccion
 	
 	^ aSubtrahend subtractWhenMinuendIsFraccion: self.! !
 
-!Fraccion methodsFor: 'arithmetic operations' stamp: 'MFR 11/11/2020 20:45:22'!
-/ aDivisor 
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'EDP 11/15/2020 23:04:12'!
+/ aDivisor
 	
-	(aDivisor isKindOf: Entero) ifTrue: [^Fraccion with: numerator over: denominator * aDivisor].
-	(aDivisor isKindOf: Fraccion) ifTrue: [^(numerator * aDivisor denominator) / (denominator * aDivisor numerator)].
-	^self error: 'anDivisor es de un tipo no soportado'.! !
+	^ aDivisor divideWhenDividendIsFraccion: self.! !
 
 !Fraccion methodsFor: 'arithmetic operations' stamp: 'MFR 11/12/2020 21:03:18'!
 addWhenAugendIsEntero: augend
@@ -562,6 +577,31 @@ addWhenAugendIsFraccion: augend
 	newNumerator := (numerator * augend denominator) + (denominator * augend numerator).	
 	newDenominator := denominator * augend denominator.
 	^Fraccion with: newNumerator over: newDenominator.	! !
+
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'EDP 11/15/2020 23:07:14'!
+divideWhenDividendIsEntero: dividend
+
+	| newNumerator newDenominator |
+	newNumerator := Entero with: (dividend integerValue * denominator integerValue).
+	newDenominator := Entero with: numerator integerValue.
+	^Fraccion with: newNumerator over: newDenominator.! !
+
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'EDP 11/15/2020 23:06:36'!
+divideWhenDividendIsFraccion: dividend
+
+	^Fraccion with: (dividend numerator * denominator) over: (dividend denominator * numerator).! !
+
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'EDP 11/15/2020 23:23:48'!
+multiplyWhenMultiplicandIsEntero: multiplicand
+
+	| newNumerator |
+	newNumerator := Entero with: (multiplicand integerValue * numerator integerValue).
+	^Fraccion with: newNumerator over: denominator.! !
+
+!Fraccion methodsFor: 'arithmetic operations' stamp: 'EDP 11/15/2020 23:20:00'!
+multiplyWhenMultiplicandIsFraccion: multiplicand
+
+	^(multiplicand numerator * numerator) / (denominator * multiplicand denominator).! !
 
 !Fraccion methodsFor: 'arithmetic operations' stamp: 'EDP 11/15/2020 18:22:40'!
 subtractWhenMinuendIsEntero: minuend
