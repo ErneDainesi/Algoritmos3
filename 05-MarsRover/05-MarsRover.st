@@ -5,219 +5,219 @@ TestCase subclass: #MarsRoverTests
 	poolDictionaries: ''
 	category: '05-MarsRover'!
 
-!MarsRoverTests methodsFor: 'move forward tests' stamp: 'MFR 12/4/2020 19:25:08'!
+!MarsRoverTests methodsFor: 'move forward tests' stamp: 'MFR 12/5/2020 16:07:59'!
 test01MarsRoverMovesForwardFacingNorthCorrectly
 	
 	| marsRover |
 	
-	marsRover := MarsRover initialPosition: 1@1 facing: #North.
+	marsRover := MarsRover initialPosition: 1@1 controlledBy: NorthMovementControls new.
 	
 	marsRover executeCommand: 'f'.
 	
 	self assert: (marsRover isOnPosition: 1@2).! !
 
-!MarsRoverTests methodsFor: 'move forward tests' stamp: 'MFR 12/4/2020 19:25:31'!
+!MarsRoverTests methodsFor: 'move forward tests' stamp: 'MFR 12/5/2020 16:07:58'!
 test02MarsRoverMovesForwardFacingEastCorrectly
 	
 	| marsRover |
 	
-	marsRover := MarsRover initialPosition: 1@1 facing: #East.
+	marsRover := MarsRover initialPosition: 1@1 controlledBy: EastMovementControls new.
 	
 	marsRover executeCommand: 'f'.
 	
 	self assert: (marsRover isOnPosition: 2@1).! !
 
-!MarsRoverTests methodsFor: 'move forward tests' stamp: 'MFR 12/4/2020 19:25:53'!
+!MarsRoverTests methodsFor: 'move forward tests' stamp: 'MFR 12/5/2020 16:07:59'!
 test03MarsRoverMovesForwardFacingSouthCorrectly
 	
 	| marsRover |
 	
-	marsRover := MarsRover initialPosition: 1@1 facing: #South.
+	marsRover := MarsRover initialPosition: 1@1 controlledBy: SouthMovementControls new.
 	
 	marsRover executeCommand: 'f'.
 	
 	self assert: (marsRover isOnPosition: 1@0).! !
 
-!MarsRoverTests methodsFor: 'move forward tests' stamp: 'MFR 12/4/2020 19:26:09'!
+!MarsRoverTests methodsFor: 'move forward tests' stamp: 'MFR 12/5/2020 16:07:58'!
 test04MarsRoverMovesForwardFacingWestCorrectly
 	
 	| marsRover |
 	
-	marsRover := MarsRover initialPosition: 1@1 facing: #West.
+	marsRover := MarsRover initialPosition: 1@1 controlledBy: WestMovementControls new.
 	
 	marsRover executeCommand: 'f'.
 	
 	self assert: (marsRover isOnPosition: 0@1).! !
 
 
-!MarsRoverTests methodsFor: 'move backwards tests' stamp: 'MFR 12/4/2020 19:34:02'!
+!MarsRoverTests methodsFor: 'move backwards tests' stamp: 'MFR 12/5/2020 16:07:58'!
 test05MarsRoverMovesBackwardsFacingNorthCorrectly
 
 	| marsRover |
 	
-	marsRover := MarsRover initialPosition: 1@1 facing: #North.
+	marsRover := MarsRover initialPosition: 1@1 controlledBy: NorthMovementControls new.
 	
 	marsRover executeCommand: 'b'.
 	
 	self assert: (marsRover isOnPosition: 1@0).! !
 
-!MarsRoverTests methodsFor: 'move backwards tests' stamp: 'MFR 12/4/2020 19:34:29'!
+!MarsRoverTests methodsFor: 'move backwards tests' stamp: 'MFR 12/5/2020 16:07:59'!
 test06MarsRoverMovesBackwardsFacingEastCorrectly
 
 	| marsRover |
 	
-	marsRover := MarsRover initialPosition: 1@1 facing: #East.
+	marsRover := MarsRover initialPosition: 1@1 controlledBy: EastMovementControls new.
 	
 	marsRover executeCommand: 'b'.
 	
 	self assert: (marsRover isOnPosition: 0@1).! !
 
-!MarsRoverTests methodsFor: 'move backwards tests' stamp: 'MFR 12/4/2020 19:34:47'!
+!MarsRoverTests methodsFor: 'move backwards tests' stamp: 'MFR 12/5/2020 16:07:58'!
 test07MarsRoverMovesBackwardsFacingSouthCorrectly
 
 	| marsRover |
 	
-	marsRover := MarsRover initialPosition: 1@1 facing: #South.
+	marsRover := MarsRover initialPosition: 1@1 controlledBy: SouthMovementControls new.
 	
 	marsRover executeCommand: 'b'.
 	
 	self assert: (marsRover isOnPosition: 1@2).! !
 
-!MarsRoverTests methodsFor: 'move backwards tests' stamp: 'MFR 12/4/2020 19:35:24'!
+!MarsRoverTests methodsFor: 'move backwards tests' stamp: 'MFR 12/5/2020 16:07:59'!
 test08MarsRoverMovesBackwardsFacingWestCorrectly
 
 	| marsRover |
 	
-	marsRover := MarsRover initialPosition: 1@1 facing: #West.
+	marsRover := MarsRover initialPosition: 1@1 controlledBy: WestMovementControls new.
 	
 	marsRover executeCommand: 'b'.
 	
 	self assert: (marsRover isOnPosition: 2@1).! !
 
 
-!MarsRoverTests methodsFor: 'rotates towards right tests' stamp: 'MFR 12/4/2020 20:04:34'!
+!MarsRoverTests methodsFor: 'rotates towards right tests' stamp: 'MFR 12/5/2020 16:09:20'!
 test09MarsRoverRotates90DegreesTowardsRightFacingNorthCorrectly
 
 	| marsRover |
 	
-	marsRover := MarsRover initialPosition: 1@1 facing: #North.
+	marsRover := MarsRover initialPosition: 1@1 controlledBy: NorthMovementControls new.
 	
 	marsRover executeCommand: 'r'.
 	
-	self assert: (marsRover isFacing: #East).! !
+	self assert: (marsRover isControlledBy: EastMovementControls).! !
 
-!MarsRoverTests methodsFor: 'rotates towards right tests' stamp: 'MFR 12/4/2020 20:04:46'!
+!MarsRoverTests methodsFor: 'rotates towards right tests' stamp: 'MFR 12/5/2020 16:09:20'!
 test10MarsRoverRotates90DegreesTowardsRightFacingEastCorrectly
 
 	| marsRover |
 	
-	marsRover := MarsRover initialPosition: 1@1 facing: #East.
+	marsRover := MarsRover initialPosition: 1@1 controlledBy: EastMovementControls new.
 	
 	marsRover executeCommand: 'r'.
 	
-	self assert: (marsRover isFacing: #South).! !
+	self assert: (marsRover isControlledBy: SouthMovementControls).! !
 
-!MarsRoverTests methodsFor: 'rotates towards right tests' stamp: 'MFR 12/4/2020 20:04:59'!
+!MarsRoverTests methodsFor: 'rotates towards right tests' stamp: 'MFR 12/5/2020 16:09:20'!
 test11MarsRoverRotates90DegreesTowardsRightFacingSouthCorrectly
 
 	| marsRover |
 	
-	marsRover := MarsRover initialPosition: 1@1 facing: #South.
+	marsRover := MarsRover initialPosition: 1@1 controlledBy: SouthMovementControls new.
 	
 	marsRover executeCommand: 'r'.
 	
-	self assert: (marsRover isFacing: #West).! !
+	self assert: (marsRover isControlledBy: WestMovementControls).! !
 
-!MarsRoverTests methodsFor: 'rotates towards right tests' stamp: 'MFR 12/4/2020 20:05:14'!
+!MarsRoverTests methodsFor: 'rotates towards right tests' stamp: 'MFR 12/5/2020 16:09:20'!
 test12MarsRoverRotates90DegreesTowardsRightFacingWestCorrectly
 
 	| marsRover |
 	
-	marsRover := MarsRover initialPosition: 1@1 facing: #West.
+	marsRover := MarsRover initialPosition: 1@1 controlledBy: WestMovementControls new.
 	
 	marsRover executeCommand: 'r'.
 	
-	self assert: (marsRover isFacing: #North).! !
+	self assert: (marsRover isControlledBy: NorthMovementControls).! !
 
 
-!MarsRoverTests methodsFor: 'rotates towards left tests' stamp: 'MFR 12/4/2020 20:05:31'!
+!MarsRoverTests methodsFor: 'rotates towards left tests' stamp: 'MFR 12/5/2020 16:09:20'!
 test13MarsRoverRotates90DegreesTowardsLeftFacingNorthCorrectly
 
 	| marsRover |
 	
-	marsRover := MarsRover initialPosition: 1@1 facing: #North.
+	marsRover := MarsRover initialPosition: 1@1 controlledBy: NorthMovementControls new.
 	
 	marsRover executeCommand: 'l'.
 	
-	self assert: (marsRover isFacing: #West).! !
+	self assert: (marsRover isControlledBy: WestMovementControls).! !
 
-!MarsRoverTests methodsFor: 'rotates towards left tests' stamp: 'MFR 12/4/2020 20:06:11'!
+!MarsRoverTests methodsFor: 'rotates towards left tests' stamp: 'MFR 12/5/2020 16:09:20'!
 test14MarsRoverRotates90DegreesTowardsLeftFacingEastCorrectly
 
 	| marsRover |
 	
-	marsRover := MarsRover initialPosition: 1@1 facing: #East.
+	marsRover := MarsRover initialPosition: 1@1 controlledBy: EastMovementControls new.
 	
 	marsRover executeCommand: 'l'.
 	
-	self assert: (marsRover isFacing: #North).! !
+	self assert: (marsRover isControlledBy: NorthMovementControls).! !
 
-!MarsRoverTests methodsFor: 'rotates towards left tests' stamp: 'MFR 12/4/2020 20:06:31'!
+!MarsRoverTests methodsFor: 'rotates towards left tests' stamp: 'MFR 12/5/2020 16:09:20'!
 test15MarsRoverRotates90DegreesTowardsLeftFacingSouthCorrectly
 
 	| marsRover |
 	
-	marsRover := MarsRover initialPosition: 1@1 facing: #South.
+	marsRover := MarsRover initialPosition: 1@1 controlledBy: SouthMovementControls new.
 	
 	marsRover executeCommand: 'l'.
 	
-	self assert: (marsRover isFacing: #East).! !
+	self assert: (marsRover isControlledBy: EastMovementControls).! !
 
-!MarsRoverTests methodsFor: 'rotates towards left tests' stamp: 'MFR 12/4/2020 20:06:41'!
+!MarsRoverTests methodsFor: 'rotates towards left tests' stamp: 'MFR 12/5/2020 16:09:20'!
 test16MarsRoverRotates90DegreesTowardsLeftFacingWestCorrectly
 
 	| marsRover |
 	
-	marsRover := MarsRover initialPosition: 1@1 facing: #West.
+	marsRover := MarsRover initialPosition: 1@1 controlledBy: WestMovementControls new.
 	
 	marsRover executeCommand: 'l'.
 	
-	self assert: (marsRover isFacing: #South).! !
+	self assert: (marsRover isControlledBy: SouthMovementControls).! !
 
 
-!MarsRoverTests methodsFor: 'process commands tests' stamp: 'MFR 12/4/2020 20:36:26'!
+!MarsRoverTests methodsFor: 'process commands tests' stamp: 'MFR 12/5/2020 16:09:20'!
 test17MarsRoverExecutesMoreThanOneCommandCorrectly
 
 	| marsRover |
 	
-	marsRover := MarsRover initialPosition: 1@1 facing: #North.
+	marsRover := MarsRover initialPosition: 1@1 controlledBy: NorthMovementControls new.
 	
 	marsRover executeCommand: 'fr'.
 	
 	self assert: (marsRover isOnPosition: 1@2).
-	self assert: (marsRover isFacing: #East).! !
+	self assert: (marsRover isControlledBy: EastMovementControls).! !
 
-!MarsRoverTests methodsFor: 'process commands tests' stamp: 'MFR 12/4/2020 20:36:59'!
+!MarsRoverTests methodsFor: 'process commands tests' stamp: 'MFR 12/5/2020 16:09:20'!
 test18MarsRoverStopsProcessingCommandsWhenInvalidCommandIsEntered
 
 	| marsRover |
 	
-	marsRover := MarsRover initialPosition: 1@1 facing: #North.
+	marsRover := MarsRover initialPosition: 1@1 controlledBy: NorthMovementControls new.
 	
 	marsRover executeCommand: 'fjr'.
 	
 	self assert: (marsRover isOnPosition: 1@2).
-	self deny: (marsRover isFacing: #East).! !
+	self deny: (marsRover isControlledBy: EastMovementControls).! !
 
 
 !classDefinition: #MarsRover category: '05-MarsRover'!
 Object subclass: #MarsRover
-	instanceVariableNames: 'position cardinalPointFaced'
+	instanceVariableNames: 'position remoteController'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: '05-MarsRover'!
 
-!MarsRover methodsFor: 'commands' stamp: 'MFR 12/4/2020 20:34:40'!
+!MarsRover methodsFor: 'commands' stamp: 'MFR 12/5/2020 16:17:32'!
 executeCommand: aSequenceOfCommands
 
 	| commandSequenceIndex |
@@ -228,34 +228,16 @@ executeCommand: aSequenceOfCommands
 		aCommand := aSequenceOfCommands at: commandSequenceIndex.
 		
 		aCommand = $f ifTrue: [
-			cardinalPointFaced = #North ifTrue: [position := (position x)@(position y + 1).].
-			cardinalPointFaced = #East ifTrue: [position := (position x + 1)@(position y).].
-			cardinalPointFaced = #South ifTrue: [position := (position x)@(position y - 1).].
-			cardinalPointFaced = #West ifTrue: [position := (position x - 1)@(position y).].
+			remoteController moveMarsRoverForward: self.
 		] ifFalse: [
 			aCommand = $b ifTrue: [
-				cardinalPointFaced = #North ifTrue: [position := (position x)@(position y - 1).].	
-				cardinalPointFaced = #East ifTrue: [position := (position x - 1)@(position y).].
-				cardinalPointFaced = #South ifTrue: [position := (position x)@(position y + 1).].
-				cardinalPointFaced = #West ifTrue: [position := (position x + 1)@(position y).].
+				remoteController moveMarsRoverBackwards: self.
 			] ifFalse: [
 				aCommand = $r ifTrue: [
-					cardinalPointFaced = #North ifTrue: [cardinalPointFaced := #East.] 
-						ifFalse: [ cardinalPointFaced = #East ifTrue: [cardinalPointFaced := #South.] 
-							ifFalse: [ cardinalPointFaced = #South ifTrue: [cardinalPointFaced := #West.]
-								ifFalse: [cardinalPointFaced = #West ifTrue: [cardinalPointFaced := #North.]
-								].
-							].
-						]. 
+					remoteController rotateMarsRoverTowardsRight: self.
 				] ifFalse: [
 					aCommand = $l ifTrue: [
-						cardinalPointFaced = #North ifTrue: [cardinalPointFaced := #West.]
-							ifFalse: [ cardinalPointFaced = #East ifTrue: [cardinalPointFaced := #North.]
-								ifFalse: [ cardinalPointFaced = #South ifTrue: [cardinalPointFaced := #East.]
-									ifFalse: [ cardinalPointFaced = #West ifTrue: [cardinalPointFaced := #South.]
-								].
-							].
-						].
+						remoteController rotateMarsRoverTowardsLeft: self.
 					] ifFalse: [^ self.].
 				].
 			].
@@ -264,10 +246,35 @@ executeCommand: aSequenceOfCommands
 	].! !
 
 
-!MarsRover methodsFor: 'position' stamp: 'MFR 12/4/2020 19:45:04'!
-isFacing: aCardinalPoint
+!MarsRover methodsFor: 'position' stamp: 'MFR 12/5/2020 16:13:00'!
+changeRemoteControls: aRemoteControl
 	
-	^ cardinalPointFaced = aCardinalPoint.! !
+	remoteController := aRemoteControl.! !
+
+!MarsRover methodsFor: 'position' stamp: 'MFR 12/5/2020 15:35:41'!
+decreaseXCoordinate
+	
+	position := (position x - 1)@(position y).! !
+
+!MarsRover methodsFor: 'position' stamp: 'MFR 12/5/2020 15:34:22'!
+decreaseYCoordinate
+	
+	position := (position x)@(position y - 1).! !
+
+!MarsRover methodsFor: 'position' stamp: 'MFR 12/4/2020 21:35:16'!
+increaseXCoordinate
+	
+	position := (position x + 1)@(position y).! !
+
+!MarsRover methodsFor: 'position' stamp: 'MFR 12/4/2020 21:34:30'!
+increaseYCoordinate
+	
+	position := (position x)@(position y + 1).! !
+
+!MarsRover methodsFor: 'position' stamp: 'MFR 12/5/2020 16:09:36'!
+isControlledBy: aRemoteControl
+	
+	^ remoteController isKindOf: aRemoteControl.! !
 
 !MarsRover methodsFor: 'position' stamp: 'MFR 12/4/2020 19:18:31'!
 isOnPosition: aPosition 
@@ -275,19 +282,159 @@ isOnPosition: aPosition
 	^ position = aPosition.! !
 
 
-!MarsRover methodsFor: 'initialization' stamp: 'MFR 12/4/2020 19:13:05'!
-onInitialPoint: aPosition facing: aCardinalPoint 
+!MarsRover methodsFor: 'initialization' stamp: 'MFR 12/5/2020 16:06:32'!
+onInitialPoint: aPosition controlledBy: aRemoteController
 
 	position := aPosition.
-	cardinalPointFaced := aCardinalPoint.! !
+	remoteController := aRemoteController.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'MarsRover class' category: '05-MarsRover'!
 MarsRover class
-	instanceVariableNames: 'position cardinalPointFaced'!
+	instanceVariableNames: ''!
 
-!MarsRover class methodsFor: 'instance creation' stamp: 'MFR 12/4/2020 19:15:37'!
-initialPosition: aPosition facing: aCardinalPoint
+!MarsRover class methodsFor: 'instance creation' stamp: 'MFR 12/5/2020 16:08:15'!
+initialPosition: aPosition controlledBy: aRemoteController
 	
-	^self new onInitialPoint: aPosition facing: aCardinalPoint.! !
+	^self new onInitialPoint: aPosition controlledBy: aRemoteController.! !
+
+
+!classDefinition: #MarsRoverRemoteControl category: '05-MarsRover'!
+Object subclass: #MarsRoverRemoteControl
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: '05-MarsRover'!
+
+!MarsRoverRemoteControl methodsFor: 'movement' stamp: 'MFR 12/5/2020 16:17:13'!
+moveMarsRoverBackwards: aMarsRover
+
+	self subclassResponsibility ! !
+
+!MarsRoverRemoteControl methodsFor: 'movement' stamp: 'MFR 12/5/2020 16:16:59'!
+moveMarsRoverForward: aMarsRover
+
+	self subclassResponsibility ! !
+
+!MarsRoverRemoteControl methodsFor: 'movement' stamp: 'MFR 12/5/2020 16:17:24'!
+rotateMarsRoverTowardsLeft: aMarsRover
+
+	self subclassResponsibility ! !
+
+!MarsRoverRemoteControl methodsFor: 'movement' stamp: 'MFR 12/5/2020 16:17:32'!
+rotateMarsRoverTowardsRight: aMarsRover
+
+	self subclassResponsibility ! !
+
+
+!classDefinition: #EastMovementControls category: '05-MarsRover'!
+MarsRoverRemoteControl subclass: #EastMovementControls
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: '05-MarsRover'!
+
+!EastMovementControls methodsFor: 'movement' stamp: 'MFR 12/5/2020 16:17:13'!
+moveMarsRoverBackwards: aMarsRover
+
+	aMarsRover decreaseXCoordinate.! !
+
+!EastMovementControls methodsFor: 'movement' stamp: 'MFR 12/5/2020 16:16:59'!
+moveMarsRoverForward: aMarsRover
+
+	aMarsRover increaseXCoordinate.! !
+
+!EastMovementControls methodsFor: 'movement' stamp: 'MFR 12/5/2020 16:17:24'!
+rotateMarsRoverTowardsLeft: aMarsRover
+
+	aMarsRover changeRemoteControls: NorthMovementControls new.! !
+
+!EastMovementControls methodsFor: 'movement' stamp: 'MFR 12/5/2020 16:17:32'!
+rotateMarsRoverTowardsRight: aMarsRover
+
+	aMarsRover changeRemoteControls: SouthMovementControls new.! !
+
+
+!classDefinition: #NorthMovementControls category: '05-MarsRover'!
+MarsRoverRemoteControl subclass: #NorthMovementControls
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: '05-MarsRover'!
+
+!NorthMovementControls methodsFor: 'movement' stamp: 'MFR 12/5/2020 16:17:13'!
+moveMarsRoverBackwards: aMarsRover
+
+	aMarsRover decreaseYCoordinate.! !
+
+!NorthMovementControls methodsFor: 'movement' stamp: 'MFR 12/5/2020 16:16:59'!
+moveMarsRoverForward: aMarsRover
+
+	aMarsRover increaseYCoordinate.! !
+
+!NorthMovementControls methodsFor: 'movement' stamp: 'MFR 12/5/2020 16:17:24'!
+rotateMarsRoverTowardsLeft: aMarsRover
+
+	aMarsRover changeRemoteControls: WestMovementControls new.! !
+
+!NorthMovementControls methodsFor: 'movement' stamp: 'MFR 12/5/2020 16:17:32'!
+rotateMarsRoverTowardsRight: aMarsRover
+
+	aMarsRover changeRemoteControls: EastMovementControls new.! !
+
+
+!classDefinition: #SouthMovementControls category: '05-MarsRover'!
+MarsRoverRemoteControl subclass: #SouthMovementControls
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: '05-MarsRover'!
+
+!SouthMovementControls methodsFor: 'movement' stamp: 'MFR 12/5/2020 16:17:13'!
+moveMarsRoverBackwards: aMarsRover
+
+	aMarsRover increaseYCoordinate.! !
+
+!SouthMovementControls methodsFor: 'movement' stamp: 'MFR 12/5/2020 16:16:59'!
+moveMarsRoverForward: aMarsRover
+	
+	aMarsRover decreaseYCoordinate.! !
+
+!SouthMovementControls methodsFor: 'movement' stamp: 'MFR 12/5/2020 16:17:24'!
+rotateMarsRoverTowardsLeft: aMarsRover
+
+	aMarsRover changeRemoteControls: EastMovementControls new.! !
+
+!SouthMovementControls methodsFor: 'movement' stamp: 'MFR 12/5/2020 16:17:32'!
+rotateMarsRoverTowardsRight: aMarsRover
+
+	aMarsRover changeRemoteControls: WestMovementControls new.! !
+
+
+!classDefinition: #WestMovementControls category: '05-MarsRover'!
+MarsRoverRemoteControl subclass: #WestMovementControls
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: '05-MarsRover'!
+
+!WestMovementControls methodsFor: 'movement' stamp: 'MFR 12/5/2020 16:17:13'!
+moveMarsRoverBackwards: aMarsRover
+
+	aMarsRover increaseXCoordinate.! !
+
+!WestMovementControls methodsFor: 'movement' stamp: 'MFR 12/5/2020 16:16:59'!
+moveMarsRoverForward: aMarsRover
+
+	aMarsRover decreaseXCoordinate.! !
+
+!WestMovementControls methodsFor: 'movement' stamp: 'MFR 12/5/2020 16:17:24'!
+rotateMarsRoverTowardsLeft: aMarsRover
+
+	aMarsRover changeRemoteControls: SouthMovementControls new.! !
+
+!WestMovementControls methodsFor: 'movement' stamp: 'MFR 12/5/2020 16:17:32'!
+rotateMarsRoverTowardsRight: aMarsRover
+
+	aMarsRover changeRemoteControls: NorthMovementControls new.! !
