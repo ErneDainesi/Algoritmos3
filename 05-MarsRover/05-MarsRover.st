@@ -217,26 +217,32 @@ Object subclass: #MarsRover
 	poolDictionaries: ''
 	category: '05-MarsRover'!
 
-!MarsRover methodsFor: 'commands' stamp: 'MFR 12/5/2020 16:17:32'!
+!MarsRover methodsFor: 'commands' stamp: 'EEDP 12/7/2020 17:25:26'!
 executeCommand: aSequenceOfCommands
 
 	| commandSequenceIndex |
 	
 	commandSequenceIndex := 1.
 	
-	aSequenceOfCommands size timesRepeat: [ | aCommand |
+	aSequenceOfCommands size timesRepeat: [
+		| aCommand |
+		
 		aCommand := aSequenceOfCommands at: commandSequenceIndex.
 		
-		aCommand = $f ifTrue: [
+		aCommand = $f
+		ifTrue: [
 			remoteController moveMarsRoverForward: self.
 		] ifFalse: [
-			aCommand = $b ifTrue: [
+			aCommand = $b
+			ifTrue: [
 				remoteController moveMarsRoverBackwards: self.
 			] ifFalse: [
-				aCommand = $r ifTrue: [
+				aCommand = $r
+				ifTrue: [
 					remoteController rotateMarsRoverTowardsRight: self.
 				] ifFalse: [
-					aCommand = $l ifTrue: [
+					aCommand = $l
+					ifTrue: [
 						remoteController rotateMarsRoverTowardsLeft: self.
 					] ifFalse: [^ self.].
 				].
@@ -307,7 +313,7 @@ Object subclass: #MarsRoverRemoteControl
 	poolDictionaries: ''
 	category: '05-MarsRover'!
 
-!MarsRoverRemoteControl methodsFor: 'movement' stamp: 'MFR 12/5/2020 16:17:13'!
+!MarsRoverRemoteControl methodsFor: 'movement' stamp: 'EEDP 12/7/2020 17:26:18'!
 moveMarsRoverBackwards: aMarsRover
 
 	self subclassResponsibility ! !
