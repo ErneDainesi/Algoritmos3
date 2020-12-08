@@ -110,6 +110,60 @@ test06PortfolioCanNotIncludeAnyOfTheComposedAccountOfPortfolioToAdd
 			self assert: Portfolio canNotAddAccountErrorMessage equals: anError messageText.
 			self assert: portfolioToModify hasAccounts ]! !
 
+!PortfolioTest methodsFor: 'tests' stamp: 'EEDP 12/8/2020 20:14:55'!
+test07EmptyPortfolioBalanceIsZero
+
+	| simplePortfolio |	
+
+	simplePortfolio := Portfolio new.
+	
+	self assert: (simplePortfolio balance) equals: 0 * peso.! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'EEDP 12/8/2020 20:15:08'!
+test08PortfolioBalanceIsCorrect
+
+	| account secondAccount simplePortfolio |
+
+	account := ReceptiveAccount new.
+	Deposit register: 100 * peso on: account.
+
+	secondAccount := ReceptiveAccount new.
+	Deposit register: 200 * peso on: secondAccount.	
+
+	simplePortfolio := Portfolio with: account with: secondAccount.
+	
+	self assert: (simplePortfolio balance) equals: 300 * peso.! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'EEDP 12/8/2020 20:17:42'!
+test09PortfolioHasRegisteredOneTransaction
+
+	| account deposit simplePortfolio |
+	
+	account := ReceptiveAccount new.
+	deposit := Deposit register: 100 * peso on: account.
+	simplePortfolio := Portfolio with: account.
+
+	self assert: (simplePortfolio hasRegistered: deposit).! !
+
+!PortfolioTest methodsFor: 'tests' stamp: 'EEDP 12/8/2020 20:20:33'!
+test10PortfolioHasRegisteredManyTransaction
+
+	| account secondAccount deposit withdraw transfer simplePortfolio |
+
+	account := ReceptiveAccount new.
+
+	deposit := Deposit register: 100 * peso on: account.
+	withdraw := Withdraw register: 50 * peso on: account.
+
+	secondAccount := ReceptiveAccount new.
+	transfer := Transfer anAmountOfMoney: 50 * peso from: account to: secondAccount.
+
+	simplePortfolio := Portfolio with: account with: secondAccount.
+
+	self assert: (simplePortfolio hasRegistered: deposit).
+	self assert: (simplePortfolio hasRegistered: withdraw).
+	self assert: (simplePortfolio hasRegistered: transfer).! !
+
 
 !classDefinition: #ReceptiveAccountTest category: 'ServiciosFinancieros-Ejercicio'!
 TestCase subclass: #ReceptiveAccountTest
@@ -118,7 +172,7 @@ TestCase subclass: #ReceptiveAccountTest
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'EEDP 12/7/2020 19:37:15'!
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'LL 9/20/2020 17:01:58'!
 test01ReceptiveAccountHaveZeroAsBalanceWhenCreated 
 
 	| account |
@@ -139,7 +193,7 @@ test02DepositIncreasesBalanceOnTransactionValue
 	self assert: 100 * peso equals: account balance
 ! !
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'EEDP 12/3/2020 21:39:16'!
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'LL 9/20/2020 20:55:48'!
 test03WithdrawDecreasesBalanceOnTransactionValue 
 
 	| account |
@@ -162,7 +216,7 @@ test04WithdrawValueMustBePositive
 	self assert: withdrawValue equals: (Withdraw register: withdrawValue on: account) value
 ! !
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'EEDP 12/7/2020 17:41:19'!
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'LL 9/20/2020 20:56:01'!
 test05ReceptiveAccountKnowsRegisteredTransactions 
 
 	| account deposit withdraw |
@@ -170,12 +224,12 @@ test05ReceptiveAccountKnowsRegisteredTransactions
 	account := ReceptiveAccount new.
 	deposit := Deposit register: 100 * peso on: account.
 	withdraw := Withdraw register: 50 * peso on: account.
-
+		
 	self assert: (account hasRegistered: deposit).
 	self assert: (account hasRegistered: withdraw).
 ! !
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'LL 9/20/2020 20:56:08'!
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'EEDP 12/8/2020 18:59:25'!
 test06ReceptiveAccountDoNotKnowNotRegisteredTransactions
 
 	| account deposit withdraw |
@@ -188,19 +242,50 @@ test06ReceptiveAccountDoNotKnowNotRegisteredTransactions
 	self deny: (account hasRegistered: withdraw).
 ! !
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'EEDP 12/7/2020 20:31:00'!
-test07TransferIncreasesBalanceOnDestinationAccountAndDecreasesOnOriginAccount
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'EEDP 12/8/2020 20:05:55'!
+test07TransferDecreasesBalanceFromOriginAccountAndIncreasesBalanceFromDestinedAccount
 
-	| anAccount aSecondAccount |
+	| account aSecondAccount |
 	
-	anAccount := ReceptiveAccount new.
-	aSecondAccount := ReceptiveAccount new.
-	Deposit register: 100 * peso on: anAccount.
+	account := ReceptiveAccount  new.
+	aSecondAccount := ReceptiveAccount  new.
 	
-	Transfer anAmountOfMoney: 50 * peso from: anAccount to: aSecondAccount.
-		
-	self assert: 50 * peso equals: anAccount balance.
+	Deposit register: 100 * peso on: account.
+	
+	Transfer anAmountOfMoney: 50 * peso from: account to: aSecondAccount.
+	
+	self assert: 50 * peso equals: account balance.
 	self assert: 50 * peso equals: aSecondAccount balance.! !
+
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'EEDP 12/8/2020 20:07:21'!
+test08TransferDestinationAndOriginAccountsAreCorrect
+
+	| account aSecondAccount aTransfer |
+	
+	account := ReceptiveAccount  new.
+	aSecondAccount := ReceptiveAccount  new.
+	
+	Deposit register: 100 * peso on: account.
+	
+	aTransfer := Transfer anAmountOfMoney: 50 * peso from: account to: aSecondAccount.
+	
+	self assert: aTransfer originAccount equals: account.
+	self assert: aTransfer destinedAccount equals: aSecondAccount.! !
+
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'EEDP 12/8/2020 20:08:01'!
+test09TransferIsRegisteredToBothAccountsCorrectly
+
+	| account aSecondAccount aTransfer |
+	
+	account := ReceptiveAccount  new.
+	aSecondAccount := ReceptiveAccount  new.
+	
+	Deposit register: 100 * peso on: account.
+	
+	aTransfer := Transfer anAmountOfMoney: 50 * peso from: account to: aSecondAccount.
+	
+	self assert:  (account hasRegistered: aTransfer).
+	self assert:  (aSecondAccount hasRegistered: aTransfer).! !
 
 
 !classDefinition: #AccountTransaction category: 'ServiciosFinancieros-Ejercicio'!
@@ -215,13 +300,18 @@ value
 
 	self subclassResponsibility ! !
 
+!AccountTransaction methodsFor: 'value' stamp: 'EEDP 12/8/2020 20:00:54'!
+valueForBalance
+
+	self subclassResponsibility ! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'AccountTransaction class' category: 'ServiciosFinancieros-Ejercicio'!
 AccountTransaction class
 	instanceVariableNames: ''!
 
-!AccountTransaction class methodsFor: 'instance creation' stamp: 'EEDP 12/3/2020 21:10:23'!
+!AccountTransaction class methodsFor: 'instance creation' stamp: 'NR 10/21/2019 18:54:27'!
 register: aValue on: account
 
 	| transaction |
@@ -247,6 +337,11 @@ initializeFor: aValue
 
 !Deposit methodsFor: 'value' stamp: 'HernanWilkinson 7/13/2011 18:38'!
 value
+
+	^ value! !
+
+!Deposit methodsFor: 'value' stamp: 'EEDP 12/8/2020 20:01:11'!
+valueForBalance
 
 	^ value! !
 
@@ -279,6 +374,11 @@ initializeFor: aValue
 value
 
 	^ value! !
+
+!Withdraw methodsFor: 'value' stamp: 'EEDP 12/8/2020 20:01:22'!
+valueForBalance
+
+	^ value negated! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -325,6 +425,12 @@ hasAccount: anAccount
 hasAccounts
 	
 	^accounts isEmpty ! !
+
+!Portfolio methodsFor: 'testing' stamp: 'EEDP 12/8/2020 20:21:42'!
+hasRegistered: aTransaction
+	
+	accounts do: [ :account | (account hasRegistered: aTransaction) ifTrue: [^ true] ].
+	^ false.! !
 
 
 !Portfolio methodsFor: 'accessing' stamp: 'HAW 5/25/2019 11:49:06'!
@@ -376,6 +482,12 @@ signalCanNotAddAccount
 	
 	self error: self class canNotAddAccountErrorMessage! !
 
+
+!Portfolio methodsFor: 'portfolio balance' stamp: 'EEDP 12/8/2020 20:15:52'!
+balance
+
+	^ accounts sum: [:account | account balance] ifEmpty: [ 0 * peso ].! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'Portfolio class' category: 'ServiciosFinancieros-Ejercicio'!
@@ -416,10 +528,17 @@ initialize
 	transactions := OrderedCollection new.! !
 
 
-!ReceptiveAccount methodsFor: 'main protocol' stamp: 'EEDP 12/7/2020 20:43:57'!
+!ReceptiveAccount methodsFor: 'main protocol' stamp: 'EEDP 12/8/2020 20:04:42'!
 balance
 
-	^ transactions sum: [:aTransaction | aTransaction value] ifEmpty: [ 0 * peso ].! !
+	^transactions sum: [ :aTransaction | 
+			(aTransaction isKindOf: Transfer)
+			ifTrue:
+				[aTransaction valueForBalance: self]
+			ifFalse:
+				[aTransaction valueForBalance]
+			] ifEmpty:
+				[ 0 * peso ]! !
 
 !ReceptiveAccount methodsFor: 'main protocol' stamp: 'LL 9/20/2020 20:48:29'!
 hasRegistered: aTransaction
@@ -427,9 +546,10 @@ hasRegistered: aTransaction
 	^transactions includes: aTransaction
 ! !
 
-!ReceptiveAccount methodsFor: 'main protocol' stamp: 'EEDP 12/3/2020 21:18:25'!
+!ReceptiveAccount methodsFor: 'main protocol' stamp: 'HernanWilkinson 7/13/2011 18:37'!
 register: aTransaction
-	transactions add: aTransaction.
+
+	transactions add: aTransaction 
 ! !
 
 
@@ -451,24 +571,34 @@ Object subclass: #Transfer
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
 
-!Transfer methodsFor: 'initialization' stamp: 'EEDP 12/7/2020 20:46:45'!
-forAnAmountOfMoney: anAmountOfMoney from: anAccount to: aSecondAccount 
-
-	value := anAmountOfMoney.	
-	originAccount := anAccount.
-	destinedAccount := aSecondAccount.! !
-
-
-!Transfer methodsFor: 'transfer accounts' stamp: 'EEDP 12/7/2020 18:47:17'!
-originAccount
-
-	^ originAccount! !
+!Transfer methodsFor: 'initialization' stamp: 'EEDP 12/8/2020 19:09:11'!
+for: valueOfTransfer from: anOriginAccount to: aDestinationAccount 
+	
+	value := valueOfTransfer.
+	originAccount := anOriginAccount.
+	destinedAccount := aDestinationAccount.! !
 
 
-!Transfer methodsFor: 'value' stamp: 'EEDP 12/7/2020 20:19:40'!
+!Transfer methodsFor: 'value' stamp: 'EEDP 12/8/2020 19:20:45'!
 value
 
-	self subclassResponsibility ! !
+	^ value! !
+
+!Transfer methodsFor: 'value' stamp: 'EEDP 12/8/2020 20:02:17'!
+valueForBalance: anAccount
+
+	(anAccount = originAccount) ifTrue: [^ value negated] ifFalse: [^value]! !
+
+
+!Transfer methodsFor: 'transfer accounts' stamp: 'EEDP 12/8/2020 19:15:18'!
+destinedAccount
+	
+	^ destinedAccount! !
+
+!Transfer methodsFor: 'transfer accounts' stamp: 'EEDP 12/8/2020 19:15:03'!
+originAccount
+	
+	^ originAccount! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -476,51 +606,14 @@ value
 Transfer class
 	instanceVariableNames: ''!
 
-!Transfer class methodsFor: 'instance creation' stamp: 'EEDP 12/7/2020 20:26:30'!
-anAmountOfMoney: anAmountOfMoney from: anAccount to: aSecondAccount
+!Transfer class methodsFor: 'class initialization' stamp: 'EEDP 12/8/2020 19:57:51'!
+anAmountOfMoney: valueOfTransfer from: anOriginAccount to: aDestinationAccount
+	
+	| transaction |
+	
+	transaction := self new for: valueOfTransfer from: anOriginAccount to: aDestinationAccount .
 
-	| transaction transferOrigin transferDestination |
-
-	transaction := self new forAnAmountOfMoney: anAmountOfMoney from: anAccount to: aSecondAccount.
-	transferOrigin := TransferOrigin new for: anAmountOfMoney.
-	transferDestination := TransferDestination new for: anAmountOfMoney.
-	anAccount register: transferOrigin.
-	aSecondAccount register: transferDestination.
+	anOriginAccount register: transaction.
+	aDestinationAccount register: transaction.
 
 	^ transaction.! !
-
-
-!classDefinition: #TransferDestination category: 'ServiciosFinancieros-Ejercicio'!
-Transfer subclass: #TransferDestination
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'ServiciosFinancieros-Ejercicio'!
-
-!TransferDestination methodsFor: 'value' stamp: 'EEDP 12/7/2020 20:24:16'!
-for: anAmountOfMoney
-
-	value := anAmountOfMoney! !
-
-!TransferDestination methodsFor: 'value' stamp: 'EEDP 12/7/2020 20:20:21'!
-value
-	
-	^ value! !
-
-
-!classDefinition: #TransferOrigin category: 'ServiciosFinancieros-Ejercicio'!
-Transfer subclass: #TransferOrigin
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'ServiciosFinancieros-Ejercicio'!
-
-!TransferOrigin methodsFor: 'value' stamp: 'EEDP 12/7/2020 20:24:55'!
-for: anAmountOfMoney
-
-	value := anAmountOfMoney negated! !
-
-!TransferOrigin methodsFor: 'value' stamp: 'EEDP 12/7/2020 20:43:35'!
-value
-
-	^ value! !
