@@ -188,7 +188,7 @@ test06ReceptiveAccountDoNotKnowNotRegisteredTransactions
 	self deny: (account hasRegistered: withdraw).
 ! !
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'EEDP 12/7/2020 19:49:36'!
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'EEDP 12/7/2020 20:31:00'!
 test07TransferIncreasesBalanceOnDestinationAccountAndDecreasesOnOriginAccount
 
 	| anAccount aSecondAccount |
@@ -196,11 +196,6 @@ test07TransferIncreasesBalanceOnDestinationAccountAndDecreasesOnOriginAccount
 	anAccount := ReceptiveAccount new.
 	aSecondAccount := ReceptiveAccount new.
 	Deposit register: 100 * peso on: anAccount.
-	
-	"
-	transferOrigin := TransferOrigin: anAccount
-	transferDestination := TransferDestination: aSecondAccount.	
-	"
 	
 	Transfer anAmountOfMoney: 50 * peso from: anAccount to: aSecondAccount.
 		
@@ -421,25 +416,10 @@ initialize
 	transactions := OrderedCollection new.! !
 
 
-!ReceptiveAccount methodsFor: 'main protocol' stamp: 'EEDP 12/7/2020 19:40:36'!
+!ReceptiveAccount methodsFor: 'main protocol' stamp: 'EEDP 12/7/2020 20:43:57'!
 balance
 
-	^transactions sum: [ :aTransaction | 
-		(aTransaction isKindOf: Withdraw)
-		ifTrue:
-			[aTransaction value negated] 
-		ifFalse:
-			[(aTransaction isKindOf: Transfer)
-				ifTrue: [
-					(aTransaction originAccount = self)
-					ifTrue: [aTransaction value negated]
-					ifFalse: [aTransaction value]
-					] ifFalse:
-						[aTransaction value]
-				] 
-			]
-		ifEmpty:
-			[ 0 * peso ].! !
+	^ transactions sum: [:aTransaction | aTransaction value] ifEmpty: [ 0 * peso ].! !
 
 !ReceptiveAccount methodsFor: 'main protocol' stamp: 'LL 9/20/2020 20:48:29'!
 hasRegistered: aTransaction
@@ -466,29 +446,29 @@ isComposedBy: anAccount
 
 !classDefinition: #Transfer category: 'ServiciosFinancieros-Ejercicio'!
 Object subclass: #Transfer
-	instanceVariableNames: 'valueOfTransfer originAccount destinedAccount'
+	instanceVariableNames: 'value originAccount destinedAccount'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
 
-!Transfer methodsFor: 'initialization' stamp: 'EEDP 12/7/2020 18:45:51'!
+!Transfer methodsFor: 'initialization' stamp: 'EEDP 12/7/2020 20:46:45'!
 forAnAmountOfMoney: anAmountOfMoney from: anAccount to: aSecondAccount 
 
-	valueOfTransfer := anAmountOfMoney.
+	value := anAmountOfMoney.	
 	originAccount := anAccount.
 	destinedAccount := aSecondAccount.! !
 
 
-!Transfer methodsFor: 'transer accounts' stamp: 'EEDP 12/7/2020 18:47:17'!
+!Transfer methodsFor: 'transfer accounts' stamp: 'EEDP 12/7/2020 18:47:17'!
 originAccount
 
 	^ originAccount! !
 
 
-!Transfer methodsFor: 'value' stamp: 'EEDP 12/7/2020 18:37:14'!
+!Transfer methodsFor: 'value' stamp: 'EEDP 12/7/2020 20:19:40'!
 value
 
-	^ valueOfTransfer! !
+	self subclassResponsibility ! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -496,13 +476,51 @@ value
 Transfer class
 	instanceVariableNames: ''!
 
-!Transfer class methodsFor: 'instance creation' stamp: 'EEDP 12/7/2020 18:24:08'!
+!Transfer class methodsFor: 'instance creation' stamp: 'EEDP 12/7/2020 20:26:30'!
 anAmountOfMoney: anAmountOfMoney from: anAccount to: aSecondAccount
 
-	| transaction |
+	| transaction transferOrigin transferDestination |
 
 	transaction := self new forAnAmountOfMoney: anAmountOfMoney from: anAccount to: aSecondAccount.
-	anAccount register: transaction.
-	aSecondAccount register: transaction.
+	transferOrigin := TransferOrigin new for: anAmountOfMoney.
+	transferDestination := TransferDestination new for: anAmountOfMoney.
+	anAccount register: transferOrigin.
+	aSecondAccount register: transferDestination.
 
 	^ transaction.! !
+
+
+!classDefinition: #TransferDestination category: 'ServiciosFinancieros-Ejercicio'!
+Transfer subclass: #TransferDestination
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Ejercicio'!
+
+!TransferDestination methodsFor: 'value' stamp: 'EEDP 12/7/2020 20:24:16'!
+for: anAmountOfMoney
+
+	value := anAmountOfMoney! !
+
+!TransferDestination methodsFor: 'value' stamp: 'EEDP 12/7/2020 20:20:21'!
+value
+	
+	^ value! !
+
+
+!classDefinition: #TransferOrigin category: 'ServiciosFinancieros-Ejercicio'!
+Transfer subclass: #TransferOrigin
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Ejercicio'!
+
+!TransferOrigin methodsFor: 'value' stamp: 'EEDP 12/7/2020 20:24:55'!
+for: anAmountOfMoney
+
+	value := anAmountOfMoney negated! !
+
+!TransferOrigin methodsFor: 'value' stamp: 'EEDP 12/7/2020 20:43:35'!
+value
+
+	^ value! !
