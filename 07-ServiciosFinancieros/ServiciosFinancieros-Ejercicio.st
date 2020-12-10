@@ -287,6 +287,21 @@ test09TransferIsRegisteredToBothAccountsCorrectly
 	self assert:  (account hasRegistered: aTransfer).
 	self assert:  (aSecondAccount hasRegistered: aTransfer).! !
 
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'EEDP 12/10/2020 18:15:59'!
+test10TransferPartsKnowThereCounterParts
+
+	| account aSecondAccount aTransfer |
+
+	account := ReceptiveAccount  new.
+	aSecondAccount := ReceptiveAccount  new.
+
+	Deposit register: 100 * peso on: account.
+
+	aTransfer := Transfer anAmountOfMoney: 50 * peso from: account to: aSecondAccount.
+
+	self assert: aTransfer originAccount equals: (aTransfer transferCounterPart: aTransfer destinedAccount).
+	self assert: aTransfer destinedAccount equals: (aTransfer transferCounterPart: aTransfer originAccount).! !
+
 
 !classDefinition: #AccountTransaction category: 'ServiciosFinancieros-Ejercicio'!
 Object subclass: #AccountTransaction
@@ -584,10 +599,14 @@ value
 
 	^ value! !
 
-!Transfer methodsFor: 'value' stamp: 'EEDP 12/8/2020 20:02:17'!
+!Transfer methodsFor: 'value' stamp: 'EEDP 12/10/2020 16:49:26'!
 valueForBalance: anAccount
 
-	(anAccount = originAccount) ifTrue: [^ value negated] ifFalse: [^value]! !
+	(anAccount = originAccount)
+	ifTrue:
+		[^ value negated]
+	ifFalse:
+		[^value]! !
 
 
 !Transfer methodsFor: 'transfer accounts' stamp: 'EEDP 12/8/2020 19:15:18'!
@@ -599,6 +618,15 @@ destinedAccount
 originAccount
 	
 	^ originAccount! !
+
+!Transfer methodsFor: 'transfer accounts' stamp: 'EEDP 12/10/2020 16:02:58'!
+transferCounterPart: aReceptiveAccount
+
+	(aReceptiveAccount isComposedBy: originAccount)
+	ifTrue:
+		[^destinedAccount]
+	ifFalse:
+		[^originAccount]! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
