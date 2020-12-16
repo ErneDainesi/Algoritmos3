@@ -259,7 +259,7 @@ TestCase subclass: #ReportTest
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion-2-Portfolio'!
 
-!ReportTest methodsFor: 'account summary report test' stamp: 'MFR 12/14/2020 20:38:30'!
+!ReportTest methodsFor: 'account summary report tests' stamp: 'MFR 12/14/2020 20:38:30'!
 test01AccountSummaryBalanceIsZeroForEmptyAccount
 	
 	| account accountSummary |
@@ -270,7 +270,7 @@ test01AccountSummaryBalanceIsZeroForEmptyAccount
 	
 	self assert: (accountSummary report includes: 'Balance = 0 pesos').! !
 
-!ReportTest methodsFor: 'account summary report test' stamp: 'MFR 12/14/2020 20:40:08'!
+!ReportTest methodsFor: 'account summary report tests' stamp: 'MFR 12/14/2020 20:40:08'!
 test02AccountSummaryReportsBalanceAndDepositCorrectly
 	
 	| account accountSummary |
@@ -283,7 +283,7 @@ test02AccountSummaryReportsBalanceAndDepositCorrectly
 	self assert: (accountSummary report includes: 'Deposito por 100 pesos').
 	self assert: (accountSummary report includes: 'Balance = 100 pesos').! !
 
-!ReportTest methodsFor: 'account summary report test' stamp: 'MFR 12/14/2020 20:40:14'!
+!ReportTest methodsFor: 'account summary report tests' stamp: 'MFR 12/14/2020 20:40:14'!
 test03AccountSummaryReportsBalanceAndWithdrawCorrectly
 	
 	| account accountSummary |
@@ -296,7 +296,7 @@ test03AccountSummaryReportsBalanceAndWithdrawCorrectly
 	self assert: (accountSummary report includes: 'Extraccion por 100 pesos').
 	self assert: (accountSummary report includes: 'Balance = -100 pesos').! !
 
-!ReportTest methodsFor: 'account summary report test' stamp: 'MFR 12/14/2020 20:40:20'!
+!ReportTest methodsFor: 'account summary report tests' stamp: 'MFR 12/14/2020 20:40:20'!
 test04AccountSummaryReportsBalanceAndTransferForBothAccountsCorrectly
 	
 	| account anotherAccount accountSummary anotherAccountSummary |
@@ -316,7 +316,7 @@ test04AccountSummaryReportsBalanceAndTransferForBothAccountsCorrectly
 	self assert: (anotherAccountSummary report includes: 'Balance = 50 pesos').! !
 
 
-!ReportTest methodsFor: 'portfolio summary report test' stamp: 'MFR 12/14/2020 20:41:00'!
+!ReportTest methodsFor: 'portfolio summary report tests' stamp: 'MFR 12/14/2020 20:41:00'!
 test05AccountSummaryBalanceIsZeroForEmptyPortfolio
 	
 	| portfolio portfolioSummary |
@@ -327,7 +327,7 @@ test05AccountSummaryBalanceIsZeroForEmptyPortfolio
 	
 	self assert: (portfolioSummary report includes: 'Balance = 0 pesos').! !
 
-!ReportTest methodsFor: 'portfolio summary report test' stamp: 'MFR 12/14/2020 20:41:46'!
+!ReportTest methodsFor: 'portfolio summary report tests' stamp: 'MFR 12/14/2020 20:41:46'!
 test06AccountSummaryBalanceIsZeroForPortfolioWithOneEmptyAccount
 	
 	| account portfolio portfolioSummary |
@@ -340,7 +340,7 @@ test06AccountSummaryBalanceIsZeroForPortfolioWithOneEmptyAccount
 	
 	self assert: (portfolioSummary report includes: 'Balance = 0 pesos').! !
 
-!ReportTest methodsFor: 'portfolio summary report test' stamp: 'MFR 12/14/2020 20:42:56'!
+!ReportTest methodsFor: 'portfolio summary report tests' stamp: 'MFR 12/14/2020 20:42:56'!
 test07AccountSummaryReportsBalanceAndDepositCorrectlyForPortfolioWithAnotherPortfolioWithAccount
 	
 	| account portfolio portfolioSummary anotherPortfolio |
@@ -385,6 +385,55 @@ test09TransferNetReportsNetValueCorrectlyForBothAccounts
 	
 	self assert: accountNetTransfer report equals: 'Neto de transferencias = -50 pesos'.
 	self assert: anotherAccountNetTransfer report equals: 'Neto de transferencias = 50 pesos'.! !
+
+
+!ReportTest methodsFor: 'portfolio tree printer tests' stamp: 'MFR 12/16/2020 15:29:33'!
+test10PortfolioTreePrinterForEmptyPortfolioIsCorrect
+	
+	| portfolio portfolioTreePrinter report |
+	
+	portfolio := Portfolio named: 'New portfolio'.
+		
+	portfolioTreePrinter := PortfolioTreePrinter for: portfolio.
+	
+	report := portfolioTreePrinter report.
+	
+	self assert: (report at: 1) equals: 'New portfolio'.! !
+
+!ReportTest methodsFor: 'portfolio tree printer tests' stamp: 'MFR 12/16/2020 15:30:01'!
+test11PortfolioTreePrinterForPortfolioWithOneAccountIsCorrect
+	
+	| portfolio portfolioTreePrinter anAccount report |
+	
+	anAccount := ReceptiveAccount named: 'Account name'.
+	
+	portfolio := Portfolio named: 'New portfolio' with: anAccount.
+		
+	portfolioTreePrinter := PortfolioTreePrinter for: portfolio.
+	
+	report := portfolioTreePrinter report.
+	
+	self assert: (report at: 1) equals: 'New portfolio'.
+	self assert: (report at: 2) equals: 'Account name'.! !
+
+!ReportTest methodsFor: 'portfolio tree printer tests' stamp: 'MFR 12/16/2020 15:31:33'!
+test12PortfolioTreePrinterForComposedPortfolioIsCorrect
+	
+	| angiesAccount childrenPortfolio myAccount familyPortfolio portfolioTreePrinter report |
+	
+	angiesAccount := ReceptiveAccount named: 'Cuenta de Angeles'. 
+	childrenPortfolio := Portfolio named: 'Portfolio de hijos' with: angiesAccount. 
+	myAccount := ReceptiveAccount named: 'Cuenta mia'. 
+	familyPortfolio := Portfolio named: 'Portfolio de la familia' with: myAccount with: childrenPortfolio.
+	
+	portfolioTreePrinter := PortfolioTreePrinter for: familyPortfolio.
+	
+	report := portfolioTreePrinter report.
+	
+	self assert: (report at: 1) equals: 'Portfolio de la familia'.
+	self assert: (report at: 2) equals: 'Cuenta mia'.
+	self assert: (report at: 3) equals: 'Portfolio de hijos'.
+	self assert: (report at: 4) equals: 'Cuenta de Angeles'.! !
 
 
 !classDefinition: #TransferTest category: 'ServiciosFinancieros-Solucion-2-Portfolio'!
@@ -508,10 +557,21 @@ hasRegistered: aTransaction
 
 	self subclassResponsibility ! !
 
+!Account methodsFor: 'main protocol' stamp: 'MFR 12/16/2020 16:19:52'!
+nameOfAccount
+
+	self subclassResponsibility ! !
+
 !Account methodsFor: 'main protocol' stamp: 'MFR 12/15/2020 19:46:51'!
 transactionsDo: aBlock
 
 	self subclassResponsibility! !
+
+
+!Account methodsFor: 'report' stamp: 'MFR 12/15/2020 21:13:06'!
+reportAccount: aReport
+
+	self subclassResponsibility ! !
 
 
 !Account methodsFor: 'composition - private' stamp: 'HAW 5/25/2019 12:24:04'!
@@ -527,7 +587,7 @@ isComposedBy: anAccount
 
 !classDefinition: #Portfolio category: 'ServiciosFinancieros-Solucion-2-Portfolio'!
 Account subclass: #Portfolio
-	instanceVariableNames: 'accounts parents'
+	instanceVariableNames: 'accounts parents name'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion-2-Portfolio'!
@@ -538,6 +598,18 @@ initialize
 	accounts := OrderedCollection new.
 	parents := OrderedCollection new.! !
 
+!Portfolio methodsFor: 'initialization' stamp: 'MFR 12/15/2020 20:14:24'!
+initializeWithName: aName
+
+	accounts := OrderedCollection new.
+	parents := OrderedCollection new.
+	name := aName.! !
+
+
+!Portfolio methodsFor: 'main protocol' stamp: 'MFR 12/16/2020 15:28:28'!
+accountsDo: aBlock
+	
+	accounts do: aBlock.! !
 
 !Portfolio methodsFor: 'main protocol' stamp: 'LL 9/21/2020 01:35:22'!
 balance
@@ -548,6 +620,11 @@ balance
 hasRegistered: aTransaction
 
 	^accounts anySatisfy: [ :anAccount | anAccount hasRegistered: aTransaction ]! !
+
+!Portfolio methodsFor: 'main protocol' stamp: 'MFR 12/16/2020 15:14:36'!
+nameOfAccount
+
+	^ name! !
 
 !Portfolio methodsFor: 'main protocol' stamp: 'MFR 12/15/2020 19:31:27'!
 transactionsDo: aBlock
@@ -580,6 +657,12 @@ hasAccount: anAccount
 hasAccounts
 	
 	^accounts isEmpty ! !
+
+
+!Portfolio methodsFor: 'report' stamp: 'MFR 12/15/2020 21:12:26'!
+reportAccount: aReport
+
+	^ aReport generateForPortfolio: self.! !
 
 
 !Portfolio methodsFor: 'composition - private' stamp: 'HAW 5/25/2019 12:17:31'!
@@ -636,6 +719,30 @@ canNotAddAccountErrorMessage
 	
 	^'Can not add repeated account to a portfolio'! !
 
+!Portfolio class methodsFor: 'as yet unclassified' stamp: 'MFR 12/15/2020 20:20:38'!
+named: aName
+
+	^self new
+		initializeWithName: aName;
+		yourself! !
+
+!Portfolio class methodsFor: 'as yet unclassified' stamp: 'MFR 12/15/2020 20:19:29'!
+named: aName with: anAccount
+
+	^self new
+		initializeWithName: aName;
+		add: anAccount;
+		yourself! !
+
+!Portfolio class methodsFor: 'as yet unclassified' stamp: 'MFR 12/15/2020 20:18:36'!
+named: aName with: anAccount with: anotherAccount
+
+	^self new
+		initializeWithName: aName;
+		add: anAccount;
+		add: anotherAccount;
+		yourself! !
+
 !Portfolio class methodsFor: 'as yet unclassified' stamp: 'HAW 5/25/2019 11:18:21'!
 with: anAccount
 
@@ -654,7 +761,7 @@ with: anAccount with: anotherAccount
 
 !classDefinition: #ReceptiveAccount category: 'ServiciosFinancieros-Solucion-2-Portfolio'!
 Account subclass: #ReceptiveAccount
-	instanceVariableNames: 'transactions'
+	instanceVariableNames: 'transactions name'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion-2-Portfolio'!
@@ -663,6 +770,12 @@ Account subclass: #ReceptiveAccount
 initialize
 
 	transactions := OrderedCollection new.! !
+
+!ReceptiveAccount methodsFor: 'initialization' stamp: 'MFR 12/15/2020 20:28:44'!
+initializeWithName: aName
+
+	transactions := OrderedCollection new.
+	name := aName.! !
 
 
 !ReceptiveAccount methodsFor: 'main protocol' stamp: 'LL 9/21/2020 01:35:28'!
@@ -678,6 +791,12 @@ hasRegistered: aTransaction
 	^transactions includes: aTransaction
 ! !
 
+!ReceptiveAccount methodsFor: 'main protocol' stamp: 'MFR 12/16/2020 15:14:21'!
+nameOfAccount
+		
+	^ name
+! !
+
 !ReceptiveAccount methodsFor: 'main protocol' stamp: 'HernanWilkinson 7/13/2011 18:37'!
 register: aTransaction
 
@@ -690,6 +809,12 @@ transactionsDo: aBlock
 	transactions do: aBlock.! !
 
 
+!ReceptiveAccount methodsFor: 'report' stamp: 'MFR 12/15/2020 21:12:46'!
+reportAccount: aReport
+
+	^ aReport generateForReceptiveAccount: self.! !
+
+
 !ReceptiveAccount methodsFor: 'composition - private' stamp: 'HAW 5/25/2019 12:03:32'!
 addedTo: aPortfolio 
 	
@@ -699,6 +824,17 @@ addedTo: aPortfolio
 isComposedBy: anAccount
 
 	^self = anAccount ! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'ReceptiveAccount class' category: 'ServiciosFinancieros-Solucion-2-Portfolio'!
+ReceptiveAccount class
+	instanceVariableNames: ''!
+
+!ReceptiveAccount class methodsFor: 'class initialization' stamp: 'MFR 12/15/2020 20:28:28'!
+named: aName
+ 
+	^ self new initializeWithName: aName.! !
 
 
 !classDefinition: #AccountTransaction category: 'ServiciosFinancieros-Solucion-2-Portfolio'!
@@ -913,7 +1049,7 @@ for: aValue
 
 !classDefinition: #Report category: 'ServiciosFinancieros-Solucion-2-Portfolio'!
 Object subclass: #Report
-	instanceVariableNames: 'account'
+	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion-2-Portfolio'!
@@ -952,7 +1088,7 @@ initializeReportFor: anAccount
 
 !classDefinition: #AccountSummary category: 'ServiciosFinancieros-Solucion-2-Portfolio'!
 Report subclass: #AccountSummary
-	instanceVariableNames: ''
+	instanceVariableNames: 'account'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion-2-Portfolio'!
@@ -1010,7 +1146,7 @@ for: anAccount
 
 !classDefinition: #NetTransfer category: 'ServiciosFinancieros-Solucion-2-Portfolio'!
 Report subclass: #NetTransfer
-	instanceVariableNames: ''
+	instanceVariableNames: 'account'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Solucion-2-Portfolio'!
@@ -1064,6 +1200,57 @@ NetTransfer class
 for: anAccount 
 
 	^ self new initializeReportFor: anAccount.! !
+
+
+!classDefinition: #PortfolioTreePrinter category: 'ServiciosFinancieros-Solucion-2-Portfolio'!
+Report subclass: #PortfolioTreePrinter
+	instanceVariableNames: 'portfolio finalReport'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Solucion-2-Portfolio'!
+
+!PortfolioTreePrinter methodsFor: 'instance creation' stamp: 'MFR 12/15/2020 21:17:18'!
+initializeReportFor: aPortfolio
+
+	portfolio := aPortfolio.
+	finalReport := OrderedCollection new.! !
+
+
+!PortfolioTreePrinter methodsFor: 'reports' stamp: 'MFR 12/16/2020 15:15:02'!
+generateForPortfolio: aPortfolio
+	
+	finalReport add: aPortfolio nameOfAccount.
+
+	aPortfolio accountsDo: [ :anAccount | 
+						finalReport add: (anAccount reportAccount: self).
+						].! !
+
+!PortfolioTreePrinter methodsFor: 'reports' stamp: 'MFR 12/16/2020 15:14:56'!
+generateForReceptiveAccount: aReceptiveAccount
+
+	^ aReceptiveAccount nameOfAccount! !
+
+!PortfolioTreePrinter methodsFor: 'reports' stamp: 'MFR 12/16/2020 15:14:50'!
+report
+	
+	finalReport add: portfolio nameOfAccount.
+	
+	portfolio accountsDo: [ :anAccount | 
+						finalReport add: (anAccount reportAccount: self).
+						].
+	
+	^ finalReport.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'PortfolioTreePrinter class' category: 'ServiciosFinancieros-Solucion-2-Portfolio'!
+PortfolioTreePrinter class
+	instanceVariableNames: ''!
+
+!PortfolioTreePrinter class methodsFor: 'class initialization' stamp: 'MFR 12/15/2020 20:21:52'!
+for: aPortfolio 
+	
+	^ self new initializeReportFor: aPortfolio.! !
 
 
 !classDefinition: #Transfer category: 'ServiciosFinancieros-Solucion-2-Portfolio'!
