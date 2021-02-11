@@ -5,48 +5,8 @@ TestCase subclass: #CartTests
 	poolDictionaries: ''
 	category: '09-TusLibros'!
 
-!CartTests methodsFor: 'testing' stamp: 'MFR 2/10/2021 19:20:35'!
-test01
-
-	| cart clientId clientPass |
-	
-	clientId := '123'.
-	clientPass := '123'.
-	cart := Cart id: clientId password: clientPass.
-	
-	self assert: cart quantityOfElementsInCart equals: 0.! !
-
-!CartTests methodsFor: 'testing' stamp: 'MFR 2/10/2021 19:25:52'!
-test02
-
-	| cart clientId clientPass isbn |
-	
-	clientId := '123'.
-	clientPass := '123'.
-	cart := Cart id: clientId password: clientPass.
-	isbn := '456'.
-	cart addToCart: isbn quantity: 1. 
-	
-	self assert: (cart has: 1 element: isbn).! !
-
-!CartTests methodsFor: 'testing' stamp: 'MFR 2/10/2021 19:47:34'!
-test03
-
-	| cart clientId clientPass firstIsbn secondIsbn |
-	
-	clientId := '123'.
-	clientPass := '123'.
-	cart := Cart id: clientId password: clientPass.
-	firstIsbn := '456'.
-	cart addToCart: firstIsbn quantity: 2. 
-	secondIsbn := '789'.
-	cart addToCart: secondIsbn quantity: 1.
-	
-	self assert: (cart has: 2 element: firstIsbn).
-	self assert: cart quantityOfElementsInCart equals: 3.! !
-
-!CartTests methodsFor: 'testing' stamp: 'MFR 2/10/2021 20:37:13'!
-test04
+!CartTests methodsFor: 'error handling' stamp: 'EEDP 2/11/2021 12:17:46'!
+test04CannotAddToCartQuantityBelowOne
 
 	| cart clientId clientPass isbn |
 	
@@ -62,8 +22,8 @@ test04
 			self assert: cart quantityOfElementsInCart equals: 0.
 		].! !
 
-!CartTests methodsFor: 'testing' stamp: 'MFR 2/10/2021 21:18:44'!
-test05
+!CartTests methodsFor: 'error handling' stamp: 'EEDP 2/11/2021 12:18:41'!
+test05CannotAddBookThatIsntInCatalogue
 
 	| cart clientId clientPass isbn |
 	
@@ -79,8 +39,108 @@ test05
 			self assert: cart quantityOfElementsInCart equals: 0.
 		].! !
 
-!CartTests methodsFor: 'testing' stamp: 'MFR 2/10/2021 21:25:06'!
-test06
+!CartTests methodsFor: 'error handling' stamp: 'EEDP 2/11/2021 12:22:28'!
+test10CannotCheckOutEmptyCart
+
+	| cart clientId clientPass  cced ccn cco |
+	
+	clientId := '123'.
+	clientPass := '123'.
+	cart := Cart id: clientId password: clientPass.
+	ccn := '1234567890123456'.
+	cced := '092021'.
+	cco := 'Guido Kaczka'.
+	
+	self should: [ cart checkOutCartWithCreditCardNumber: ccn validThrough: cced ownedBy: cco]
+		raise: Error - MessageNotUnderstood 
+		withExceptionDo: [ :anError |
+			self assert: cart quantityOfElementsInCart equals: 0.
+			self assert: cart cannotCheckOutEmptyCartErrorDescription equals: anError messageText.
+		].! !
+
+!CartTests methodsFor: 'error handling' stamp: 'EEDP 2/11/2021 12:22:59'!
+test11CannotCheckOutCartWithInvalidCreditCardNumber
+
+	| cart clientId clientPass  cced ccn cco isbn |
+	
+	clientId := '123'.
+	clientPass := '123'.
+	cart := Cart id: clientId password: clientPass.
+	isbn := '456'.
+	cart addToCart: isbn quantity: 1.
+	ccn := '12345678901234567'.
+	cced := '092021'.
+	cco := 'Guido Kaczka'.
+	
+	self should: [ cart checkOutCartWithCreditCardNumber: ccn validThrough: cced ownedBy: cco]
+		raise: Error - MessageNotUnderstood 
+		withExceptionDo: [ :anError |
+			self assert: cart cannotCheckOutCartWithInvalidCreditCardNumberErrorDescription equals: anError messageText.
+		].! !
+
+!CartTests methodsFor: 'error handling' stamp: 'EEDP 2/11/2021 12:26:14'!
+test12CannotCheckOutCartWithInvalidCreditCardExpirationMonth
+
+	| cart clientId clientPass  cced ccn cco isbn |
+	
+	clientId := '123'.
+	clientPass := '123'.
+	cart := Cart id: clientId password: clientPass.
+	isbn := '456'.
+	cart addToCart: isbn quantity: 1.
+	ccn := '1234567890123456'.
+	cced := '132021'.
+	cco := 'Guido Kaczka'.
+	
+	self should: [ cart checkOutCartWithCreditCardNumber: ccn validThrough: cced ownedBy: cco]
+		raise: Error - MessageNotUnderstood 
+		withExceptionDo: [ :anError |
+			self assert: cart cannotCheckOutCartWithInvalidCreditCardExpirationMonthErrorDescription equals: anError messageText.
+		].! !
+
+!CartTests methodsFor: 'error handling' stamp: 'EEDP 2/11/2021 12:26:54'!
+test13CannotCheckoutCarthWithInvalidExpirationDate
+
+	| cart clientId clientPass  cced ccn cco isbn |
+	
+	clientId := '123'.
+	clientPass := '123'.
+	cart := Cart id: clientId password: clientPass.
+	isbn := '456'.
+	cart addToCart: isbn quantity: 1.
+	ccn := '1234567890123456'.
+	cced := '012021'.
+	cco := 'Guido Kaczka'.
+	
+	self should: [ cart checkOutCartWithCreditCardNumber: ccn validThrough: cced ownedBy: cco]
+		raise: Error - MessageNotUnderstood 
+		withExceptionDo: [ :anError |
+			self assert: cart cannotCheckOutCartWithInvalidCreditCardExpirationDateErrorDescription equals: anError messageText.
+		].! !
+
+!CartTests methodsFor: 'error handling' stamp: 'EEDP 2/11/2021 12:27:49'!
+test14CannotCheckoutCartWithInvalidCreditCardOwner
+
+	| cart clientId clientPass  cced ccn cco isbn |
+	
+	clientId := '123'.
+	clientPass := '123'.
+	cart := Cart id: clientId password: clientPass.
+	isbn := '456'.
+	cart addToCart: isbn quantity: 1.
+	ccn := '1234567890123456'.
+	cced := '092021'.
+	cco := 'Guido Emliano Agustin Martinez Kaczka'.
+	
+	self should: [ cart checkOutCartWithCreditCardNumber: ccn validThrough: cced ownedBy: cco]
+		raise: Error - MessageNotUnderstood 
+		withExceptionDo: [ :anError |
+			self assert: cart cannotCheckOutCartWithInvalidCreditCardOwnerErrorDescription equals: anError messageText.
+		].! !
+
+
+!CartTests methodsFor: 'list cart' stamp: 'EEDP 2/11/2021 12:19:59'!
+test06ListCartOnEmptyCartShowsEmptyList
 
 	| cart clientId clientPass emptyCartList |
 	
@@ -92,8 +152,8 @@ test06
 	self assert: cart quantityOfElementsInCart equals: 0.
 	self assert: cart listCart equals: emptyCartList.! !
 
-!CartTests methodsFor: 'testing' stamp: 'MFR 2/10/2021 21:27:16'!
-test07
+!CartTests methodsFor: 'list cart' stamp: 'EEDP 2/11/2021 12:20:38'!
+test07ListCartWithOneElementIsCorrect
 
 	| cart clientId clientPass isbn cartList |
 	
@@ -107,8 +167,8 @@ test07
 
 	self assert: cart listCart equals: cartList.! !
 
-!CartTests methodsFor: 'testing' stamp: 'MFR 2/10/2021 21:33:14'!
-test08
+!CartTests methodsFor: 'list cart' stamp: 'EEDP 2/11/2021 12:20:56'!
+test08ListCartWithManyElementsIsCorrect
 
 	| cart clientId clientPass cartList firstIsbn secondIsbn |
 	
@@ -128,8 +188,9 @@ test08
 
 	self assert: cart listCart equals: cartList.! !
 
-!CartTests methodsFor: 'testing' stamp: 'MFR 2/11/2021 10:44:51'!
-test09
+
+!CartTests methodsFor: 'check out' stamp: 'EEDP 2/11/2021 12:46:47'!
+test09CheckOutCartShowsCorrectTransactionId
 
 	| cart clientId clientPass isbn cced ccn cco |
 	
@@ -145,104 +206,47 @@ test09
 	self assert: (cart has: 1 element: isbn).
 	self assert: (cart checkOutCartWithCreditCardNumber: ccn validThrough: cced ownedBy: cco) equals: 'TRANSACTION_123'.! !
 
-!CartTests methodsFor: 'testing' stamp: 'MFR 2/11/2021 10:44:56'!
-test10
 
-	| cart clientId clientPass  cced ccn cco |
+!CartTests methodsFor: 'new cart' stamp: 'EEDP 2/11/2021 12:09:20'!
+test01NewCartIsEmpty
+
+	| cart clientId clientPass |
 	
 	clientId := '123'.
 	clientPass := '123'.
 	cart := Cart id: clientId password: clientPass.
-	ccn := '1234567890123456'.
-	cced := '092021'.
-	cco := 'Guido Kaczka'.
 	
-	self should: [ cart checkOutCartWithCreditCardNumber: ccn validThrough: cced ownedBy: cco]
-		raise: Error - MessageNotUnderstood 
-		withExceptionDo: [ :anError |
-			self assert: cart quantityOfElementsInCart equals: 0.
-			self assert: cart cannotCheckOutEmptyCartErrorDescription equals: anError messageText.
-		].! !
+	self assert: cart quantityOfElementsInCart equals: 0.! !
 
-!CartTests methodsFor: 'testing' stamp: 'MFR 2/11/2021 10:45:00'!
-test11
 
-	| cart clientId clientPass  cced ccn cco isbn |
+!CartTests methodsFor: 'adding elements' stamp: 'EEDP 2/11/2021 12:10:05'!
+test02AddOneElementToCart
+
+	| cart clientId clientPass isbn |
 	
 	clientId := '123'.
 	clientPass := '123'.
 	cart := Cart id: clientId password: clientPass.
 	isbn := '456'.
-	cart addToCart: isbn quantity: 1.
-	ccn := '12345678901234567'.
-	cced := '092021'.
-	cco := 'Guido Kaczka'.
+	cart addToCart: isbn quantity: 1. 
 	
-	self should: [ cart checkOutCartWithCreditCardNumber: ccn validThrough: cced ownedBy: cco]
-		raise: Error - MessageNotUnderstood 
-		withExceptionDo: [ :anError |
-			self assert: cart cannotCheckOutCartWithInvalidCreditCardNumberErrorDescription equals: anError messageText.
-		].! !
+	self assert: (cart has: 1 element: isbn).! !
 
-!CartTests methodsFor: 'testing' stamp: 'MFR 2/11/2021 10:57:17'!
-test12
+!CartTests methodsFor: 'adding elements' stamp: 'EEDP 2/11/2021 12:17:10'!
+test03AddManyElementsToCart
 
-	| cart clientId clientPass  cced ccn cco isbn |
+	| cart clientId clientPass firstIsbn secondIsbn |
 	
 	clientId := '123'.
 	clientPass := '123'.
 	cart := Cart id: clientId password: clientPass.
-	isbn := '456'.
-	cart addToCart: isbn quantity: 1.
-	ccn := '1234567890123456'.
-	cced := '132021'.
-	cco := 'Guido Kaczka'.
+	firstIsbn := '456'.
+	cart addToCart: firstIsbn quantity: 2. 
+	secondIsbn := '789'.
+	cart addToCart: secondIsbn quantity: 1.
 	
-	self should: [ cart checkOutCartWithCreditCardNumber: ccn validThrough: cced ownedBy: cco]
-		raise: Error - MessageNotUnderstood 
-		withExceptionDo: [ :anError |
-			self assert: cart cannotCheckOutCartWithInvalidCreditCardExpirationMonthErrorDescription equals: anError messageText.
-		].! !
-
-!CartTests methodsFor: 'testing' stamp: 'MFR 2/11/2021 10:45:08'!
-test13
-
-	| cart clientId clientPass  cced ccn cco isbn |
-	
-	clientId := '123'.
-	clientPass := '123'.
-	cart := Cart id: clientId password: clientPass.
-	isbn := '456'.
-	cart addToCart: isbn quantity: 1.
-	ccn := '1234567890123456'.
-	cced := '012021'.
-	cco := 'Guido Kaczka'.
-	
-	self should: [ cart checkOutCartWithCreditCardNumber: ccn validThrough: cced ownedBy: cco]
-		raise: Error - MessageNotUnderstood 
-		withExceptionDo: [ :anError |
-			self assert: cart cannotCheckOutCartWithInvalidCreditCardExpirationDateErrorDescription equals: anError messageText.
-		].! !
-
-!CartTests methodsFor: 'testing' stamp: 'MFR 2/11/2021 10:45:13'!
-test14
-
-	| cart clientId clientPass  cced ccn cco isbn |
-	
-	clientId := '123'.
-	clientPass := '123'.
-	cart := Cart id: clientId password: clientPass.
-	isbn := '456'.
-	cart addToCart: isbn quantity: 1.
-	ccn := '1234567890123456'.
-	cced := '092021'.
-	cco := 'Guido Emliano Agustin Martinez Kaczka'.
-	
-	self should: [ cart checkOutCartWithCreditCardNumber: ccn validThrough: cced ownedBy: cco]
-		raise: Error - MessageNotUnderstood 
-		withExceptionDo: [ :anError |
-			self assert: cart cannotCheckOutCartWithInvalidCreditCardOwnerErrorDescription equals: anError messageText.
-		].! !
+	self assert: (cart has: 2 element: firstIsbn).
+	self assert: cart quantityOfElementsInCart equals: 3.! !
 
 
 !classDefinition: #Cart category: '09-TusLibros'!
@@ -440,7 +444,6 @@ Cart class
 id: anId password: aPassword 
 	
 	^self new id: anId password: aPassword elements: OrderedCollection new.! !
-
 
 
 !classDefinition: #TusLibrosCatalogue category: '09-TusLibros'!
