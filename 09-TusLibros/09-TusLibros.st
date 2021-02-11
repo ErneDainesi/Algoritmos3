@@ -98,8 +98,8 @@ test12CannotCheckOutCartWithInvalidCreditCardExpirationMonth
 			self assert: cart cannotCheckOutCartWithInvalidCreditCardExpirationMonthErrorDescription equals: anError messageText.
 		].! !
 
-!CartTests methodsFor: 'error handling' stamp: 'EEDP 2/11/2021 12:26:54'!
-test13CannotCheckoutCarthWithInvalidExpirationDate
+!CartTests methodsFor: 'error handling' stamp: 'EEDP 2/11/2021 17:42:54'!
+test13CannotCheckoutCarthWithInvalidExpirationDay
 
 	| cart clientId clientPass  cced ccn cco isbn |
 	
@@ -289,10 +289,10 @@ assertCreditCardExpirationMonthIsValid: cced
 			
 	^ ((month > '12') or: (month < '01')) ifTrue: [self signalInvalidCreditCardExpirationMonth].! !
 
-!Cart methodsFor: 'assertions' stamp: 'MFR 2/11/2021 09:46:13'!
+!Cart methodsFor: 'assertions' stamp: 'EEDP 2/11/2021 17:33:35'!
 assertCreditCardNumberIsValid: ccn
 
-	^ (ccn size > 16) ifTrue: [self signalInvalidCreditCardNumber].! !
+	^ ((ccn size > 16) or: (ccn size < 16)) ifTrue: [self signalInvalidCreditCardNumber].! !
 
 !Cart methodsFor: 'assertions' stamp: 'MFR 2/10/2021 21:17:34'!
 assertElementIsInCatalogue: anElement
