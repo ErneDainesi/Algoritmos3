@@ -102,6 +102,15 @@ TestCase subclass: #CashierTest
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
+!CashierTest methodsFor: 'private' stamp: 'EEDP 2/17/2021 12:13:48'!
+assert: aBlockExpectedToFail raisesError: excpectedErrorMessage
+
+	self should: aBlockExpectedToFail 
+	raise: Error - MessageNotUnderstood 
+	withExceptionDo: [:anError |
+		self assert: excpectedErrorMessage equals: anError messageText.
+	].! !
+
 !CashierTest methodsFor: 'private' stamp: 'EDP 2/11/2021 21:22:42'!
 bookFromTheEditorial
 
@@ -115,7 +124,7 @@ createCart
 	^Cart withCatalog: aCatalog.! !
 
 
-!CashierTest methodsFor: 'tests' stamp: 'EDP 2/15/2021 19:15:22'!
+!CashierTest methodsFor: 'tests' stamp: 'EEDP 2/17/2021 12:20:06'!
 test01CannotCheckOutEmptyCart
 
 	| cart cashier creditCardExpirationDate creditCardNumber creditCardOwner |
@@ -128,11 +137,7 @@ test01CannotCheckOutEmptyCart
 	
 	cashier := Cashier withCart: cart withCreditCardNumber: creditCardNumber validThrough: creditCardExpirationDate from: creditCardOwner.
 	
-	self should: [ cashier checkOut ]
-	raise: Error - MessageNotUnderstood 
-	withExceptionDo: [:anError |
-		self assert: cashier cannotCheckOutEmptyCartErrorDescription equals: anError messageText.
-	].! !
+	self assert: [ cashier checkOut ] raisesError: cashier cannotCheckOutEmptyCartErrorDescription.! !
 
 !CashierTest methodsFor: 'tests' stamp: 'EDP 2/15/2021 19:15:17'!
 test02CheckOutCartWithOneItemOutputIsCorrect
@@ -191,7 +196,7 @@ test04CheckOutKeepsTrackOfTransactionsCorectly
 
 	self assert: cashier transactionHistory equals: transactions.! !
 
-!CashierTest methodsFor: 'tests' stamp: 'EDP 2/15/2021 19:32:42'!
+!CashierTest methodsFor: 'tests' stamp: 'EEDP 2/17/2021 12:19:31'!
 test05CannotCheckOutCartWithInvalidCreditCardNumber
 
 	| cart cashier creditCardExpirationDate creditCardNumber creditCardOwner |
@@ -206,13 +211,9 @@ test05CannotCheckOutCartWithInvalidCreditCardNumber
 
 	cashier := Cashier withCart: cart withCreditCardNumber: creditCardNumber validThrough: creditCardExpirationDate from: creditCardOwner.
 	
-	self should: [ cashier checkOut ]
-	raise: Error - MessageNotUnderstood 
-	withExceptionDo: [:anError |
-		self assert: cashier cannotCheckOutCartWithInvalidCreditCardNumberErrorDescription equals: anError messageText.
-	].! !
+	self assert: [ cashier checkOut ] raisesError: cashier cannotCheckOutCartWithInvalidCreditCardNumberErrorDescription.! !
 
-!CashierTest methodsFor: 'tests' stamp: 'EDP 2/15/2021 19:33:03'!
+!CashierTest methodsFor: 'tests' stamp: 'EEDP 2/17/2021 12:19:26'!
 test06CannotCheckOutCartWithExpiredCreditCard
 
 	| cart cashier creditCardExpirationDate creditCardNumber creditCardOwner |
@@ -227,13 +228,9 @@ test06CannotCheckOutCartWithExpiredCreditCard
 
 	cashier := Cashier withCart: cart withCreditCardNumber: creditCardNumber validThrough: creditCardExpirationDate from: creditCardOwner.
 	
-	self should: [ cashier checkOut ]
-	raise: Error - MessageNotUnderstood 
-	withExceptionDo: [:anError |
-		self assert: cashier cannotCheckOutCartWithExpiredCreditCardErrorDescription equals: anError messageText.
-	].! !
+	self assert: [ cashier checkOut ] raisesError: cashier cannotCheckOutCartWithExpiredCreditCardErrorDescription.! !
 
-!CashierTest methodsFor: 'tests' stamp: 'EDP 2/15/2021 19:33:20'!
+!CashierTest methodsFor: 'tests' stamp: 'EEDP 2/17/2021 12:18:51'!
 test07CannotCheckOutCartWithInvalidCreditCardOwner
 
 	| cart cashier creditCardExpirationDate creditCardNumber creditCardOwner |
@@ -248,11 +245,7 @@ test07CannotCheckOutCartWithInvalidCreditCardOwner
 
 	cashier := Cashier withCart: cart withCreditCardNumber: creditCardNumber validThrough: creditCardExpirationDate from: creditCardOwner.
 	
-	self should: [ cashier checkOut ]
-	raise: Error - MessageNotUnderstood 
-	withExceptionDo: [:anError |
-		self assert: cashier cannotCheckOutCartWithInvalidCreditCardOwnerErrorDescription equals: anError messageText.
-	].! !
+	self assert: [ cashier checkOut ] raisesError: cashier cannotCheckOutCartWithInvalidCreditCardOwnerErrorDescription.! !
 
 !CashierTest methodsFor: 'tests' stamp: 'EDP 2/15/2021 19:33:39'!
 test08CartIsEmptyAfterCheckingOut
