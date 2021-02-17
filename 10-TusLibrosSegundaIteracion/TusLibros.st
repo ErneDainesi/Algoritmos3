@@ -174,8 +174,8 @@ test03CheckOutWithManyItemsOutputIsCorrect
 
 	self assert: cashier checkOut equals: '0 | TRANSACTION_1_1000 pesos'.! !
 
-!CashierTest methodsFor: 'tests' stamp: 'EDP 2/15/2021 19:32:11'!
-test04CheckOutKeepsTrackOfTransactionsCorectly
+!CashierTest methodsFor: 'tests' stamp: 'EEDP 2/17/2021 12:28:18'!
+test04CashierKeepsTrackOfTransactionsCorectly
 
 	| cart cashier creditCardExpirationDate creditCardNumber creditCardOwner transactions |
 	
