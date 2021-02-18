@@ -395,63 +395,30 @@ cannotCheckOutEmptyCartErrorDescription
 	^ '1 | Cart is empty'.! !
 
 
-!Cashier methodsFor: 'error signal' stamp: 'EDP 2/11/2021 21:55:41'!
-signalCannotCheckOutCart
-
-	self error: self cannotCheckOutEmptyCartErrorDescription.! !
-
-!Cashier methodsFor: 'error signal' stamp: 'EDP 2/15/2021 19:00:13'!
-signalInvalidCreditCardExpirationDate
-
-	self error: self cannotCheckOutCartWithExpiredCreditCardErrorDescription.! !
-
-!Cashier methodsFor: 'error signal' stamp: 'EDP 2/15/2021 18:52:50'!
-signalInvalidCreditCardNumber
-
-	self error: self cannotCheckOutCartWithInvalidCreditCardNumberErrorDescription.! !
-
-!Cashier methodsFor: 'error signal' stamp: 'EDP 2/15/2021 19:17:58'!
-signalInvalidCreditCardOwner
-
-	self error: self cannotCheckOutCartWithInvalidCreditCardOwnerErrorDescription.! !
-
-
-!Cashier methodsFor: 'assertions' stamp: 'EDP 2/11/2021 22:01:02'!
-assertCartCanBeCheckedOut
-
-	^ cart isEmpty ifTrue: [self signalCannotCheckOutCart].
-	! !
-
-!Cashier methodsFor: 'assertions' stamp: 'EDP 2/15/2021 19:14:39'!
-assertCreditCardExpirationDateIsValid
-
-	| month currentDate invertedCced |
-	
-	month := cced copyFrom: 1 to: 2.
-	
-	currentDate := Date today monthIndex asString, Date today yearNumber asString.	
-	(currentDate size = 5) ifTrue: [ currentDate := '0',currentDate ].
-	
-	currentDate := (currentDate copyFrom: 3 to: 6), (currentDate copyFrom: 1 to: 2).
-	invertedCced := (cced copyFrom: 3 to: 6), (cced copyFrom: 1 to: 2).
-	
-	^ ( (month > '12') or: (month < '01') or: (currentDate > invertedCced) ) ifTrue: [self signalInvalidCreditCardExpirationDate].! !
-
-!Cashier methodsFor: 'assertions' stamp: 'EDP 2/15/2021 18:52:26'!
-assertCreditCardNumberIsValid
-
-	^ (ccn size < 15 or: ccn size > 16) ifTrue: [self signalInvalidCreditCardNumber].! !
-
-!Cashier methodsFor: 'assertions' stamp: 'EDP 2/15/2021 19:17:40'!
-assertCreditCardOwnerIsValid
-
-	^ (ccowner size > 30) ifTrue: [self signalInvalidCreditCardOwner].! !
-
-
 !Cashier methodsFor: 'accessing' stamp: 'EDP 2/15/2021 19:28:38'!
 checkIfCartIsEmpty
 	
 	^ cart isEmpty.! !
+
+!Cashier methodsFor: 'accessing' stamp: 'EEDP 2/17/2021 20:38:14'!
+getCart
+	
+	^ cart contents.! !
+
+!Cashier methodsFor: 'accessing' stamp: 'EEDP 2/17/2021 20:37:40'!
+getCreditCardExpirationDate
+	
+	^ cced.! !
+
+!Cashier methodsFor: 'accessing' stamp: 'EEDP 2/17/2021 20:37:30'!
+getCreditCardNumber
+	
+	^ ccn.! !
+
+!Cashier methodsFor: 'accessing' stamp: 'EEDP 2/17/2021 20:37:54'!
+getCreditCardOwner
+	
+	^ ccowner.! !
 
 !Cashier methodsFor: 'accessing' stamp: 'EDP 2/15/2021 19:34:15'!
 transactionHistory
@@ -459,14 +426,12 @@ transactionHistory
 	^ transactionsHistory copy.! !
 
 
-!Cashier methodsFor: 'check out' stamp: 'EDP 2/15/2021 19:29:29'!
+!Cashier methodsFor: 'check out' stamp: 'EEDP 2/18/2021 16:02:15'!
 checkOut
 	
 	| total cartContent index |
-	self assertCartCanBeCheckedOut.
-	self assertCreditCardNumberIsValid.
-	self assertCreditCardExpirationDateIsValid.
-	self assertCreditCardOwnerIsValid.
+	
+	MerchantProcesor for: self.
 	
 	total := 0 * peso.
 	index := 1.
@@ -500,3 +465,104 @@ withCart: aCart withCreditCardNumber: creditCardNumber validThrough: expirationD
 	cataloguePriceList at: 'ABC123' put: 500 * peso.
 	
 	^ self new withCart: aCart withCreditCardNumber: creditCardNumber validThrough:  expirationDate from: creditCardOwner withCataloguePriceList: cataloguePriceList.! !
+
+
+!classDefinition: #MerchantProcesor category: 'TusLibros'!
+Object subclass: #MerchantProcesor
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!MerchantProcesor methodsFor: 'validations' stamp: 'EEDP 2/18/2021 15:29:52'!
+validateCart: aCart
+
+	aCart isEmpty ifTrue: [ ^ self signalEmptyCartError ].
+	! !
+
+!MerchantProcesor methodsFor: 'validations' stamp: 'EEDP 2/18/2021 15:31:47'!
+validateCashier: aCashier
+
+	self validateCart: aCashier getCart.
+	self validateCreditCardNumber: aCashier getCreditCardNumber.
+	self validateCreditCardExpirationDate: aCashier getCreditCardExpirationDate.
+	self validateCreditCardOwner: aCashier getCreditCardOwner.! !
+
+!MerchantProcesor methodsFor: 'validations' stamp: 'EEDP 2/18/2021 15:38:22'!
+validateCreditCardExpirationDate: anExpirationDate
+	
+	| month currentDate invertedCced |
+	
+	month := anExpirationDate copyFrom: 1 to: 2.
+	
+	currentDate := Date today monthIndex asString, Date today yearNumber asString.	
+	(currentDate size = 5) ifTrue: [ currentDate := '0', currentDate ].
+	
+	currentDate := (currentDate copyFrom: 3 to: 6), (currentDate copyFrom: 1 to: 2).
+	invertedCced := (anExpirationDate copyFrom: 3 to: 6), (anExpirationDate copyFrom: 1 to: 2).
+	
+	^ ( (month > '12') or: (month < '01') or: (currentDate > invertedCced) ) ifTrue: [self invalidCreditCardExpirationDate].! !
+
+!MerchantProcesor methodsFor: 'validations' stamp: 'EEDP 2/18/2021 15:30:03'!
+validateCreditCardNumber: aCreditCardNumber
+
+	^ (aCreditCardNumber size < 15 or: aCreditCardNumber size > 16) ifTrue: [self invalidCreditCardNumber].! !
+
+!MerchantProcesor methodsFor: 'validations' stamp: 'EEDP 2/18/2021 15:30:07'!
+validateCreditCardOwner: aCreditCardOwner
+
+	^ (aCreditCardOwner size > 30) ifTrue: [self invalidCreditCardOwner].! !
+
+
+!MerchantProcesor methodsFor: 'error descriptions' stamp: 'EEDP 2/18/2021 14:59:14'!
+emptyCartErrorDescription
+	
+	^ '1 | Cart is empty'.! !
+
+!MerchantProcesor methodsFor: 'error descriptions' stamp: 'EEDP 2/18/2021 15:13:36'!
+invalidCreditCardExpirationDateErrorDescription
+	
+	^ '1 | Credit Card has expired'.! !
+
+!MerchantProcesor methodsFor: 'error descriptions' stamp: 'EEDP 2/18/2021 15:12:47'!
+invalidCreditCardNumberErrorDescription
+	
+	^ '1| Invalid credit card number.'.! !
+
+!MerchantProcesor methodsFor: 'error descriptions' stamp: 'EEDP 2/18/2021 15:16:54'!
+invalidCreditCardOwnerErrorDescription
+	
+	^ '1| Invalid credit card owner.'.! !
+
+
+!MerchantProcesor methodsFor: 'error signal' stamp: 'EEDP 2/18/2021 15:12:18'!
+invalidCreditCardExpirationDate
+	
+	self error: self invalidCreditCardExpirationDateErrorDescription.! !
+
+!MerchantProcesor methodsFor: 'error signal' stamp: 'EEDP 2/18/2021 15:13:08'!
+invalidCreditCardNumber
+	
+	self error: self invalidCreditCardNumberErrorDescription.! !
+
+!MerchantProcesor methodsFor: 'error signal' stamp: 'EEDP 2/18/2021 15:16:07'!
+invalidCreditCardOwner
+	
+	self error: self invalidCreditCardOwnerErrorDescription.! !
+
+!MerchantProcesor methodsFor: 'error signal' stamp: 'EEDP 2/18/2021 14:58:23'!
+signalEmptyCartError
+	
+	self error: self emptyCartErrorDescription.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'MerchantProcesor class' category: 'TusLibros'!
+MerchantProcesor class
+	instanceVariableNames: ''!
+
+!MerchantProcesor class methodsFor: 'class initialization' stamp: 'EEDP 2/18/2021 15:32:03'!
+for: aCashier
+
+	self new validateCashier: aCashier.
+! !
