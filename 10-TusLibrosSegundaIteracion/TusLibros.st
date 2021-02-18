@@ -488,7 +488,7 @@ validateCashier: aCashier
 	self validateCreditCardExpirationDate: aCashier getCreditCardExpirationDate.
 	self validateCreditCardOwner: aCashier getCreditCardOwner.! !
 
-!MerchantProcesor methodsFor: 'validations' stamp: 'EEDP 2/18/2021 15:38:22'!
+!MerchantProcesor methodsFor: 'validations' stamp: 'EEDP 2/18/2021 16:36:30'!
 validateCreditCardExpirationDate: anExpirationDate
 	
 	| month currentDate invertedCced |
@@ -501,17 +501,17 @@ validateCreditCardExpirationDate: anExpirationDate
 	currentDate := (currentDate copyFrom: 3 to: 6), (currentDate copyFrom: 1 to: 2).
 	invertedCced := (anExpirationDate copyFrom: 3 to: 6), (anExpirationDate copyFrom: 1 to: 2).
 	
-	^ ( (month > '12') or: (month < '01') or: (currentDate > invertedCced) ) ifTrue: [self invalidCreditCardExpirationDate].! !
+	^ ( (month > '12') or: (month < '01') or: (currentDate > invertedCced) ) ifTrue: [self signalInvalidCreditCardExpirationDateError].! !
 
-!MerchantProcesor methodsFor: 'validations' stamp: 'EEDP 2/18/2021 15:30:03'!
+!MerchantProcesor methodsFor: 'validations' stamp: 'EEDP 2/18/2021 16:36:39'!
 validateCreditCardNumber: aCreditCardNumber
 
-	^ (aCreditCardNumber size < 15 or: aCreditCardNumber size > 16) ifTrue: [self invalidCreditCardNumber].! !
+	^ (aCreditCardNumber size < 15 or: aCreditCardNumber size > 16) ifTrue: [self signalInvalidCreditCardNumberError].! !
 
-!MerchantProcesor methodsFor: 'validations' stamp: 'EEDP 2/18/2021 15:30:07'!
+!MerchantProcesor methodsFor: 'validations' stamp: 'EEDP 2/18/2021 16:37:00'!
 validateCreditCardOwner: aCreditCardOwner
 
-	^ (aCreditCardOwner size > 30) ifTrue: [self invalidCreditCardOwner].! !
+	^ (aCreditCardOwner size > 30) ifTrue: [self signalInvalidCreditCardOwnerError].! !
 
 
 !MerchantProcesor methodsFor: 'error descriptions' stamp: 'EEDP 2/18/2021 14:59:14'!
@@ -535,25 +535,25 @@ invalidCreditCardOwnerErrorDescription
 	^ '1| Invalid credit card owner.'.! !
 
 
-!MerchantProcesor methodsFor: 'error signal' stamp: 'EEDP 2/18/2021 15:12:18'!
-invalidCreditCardExpirationDate
-	
-	self error: self invalidCreditCardExpirationDateErrorDescription.! !
-
-!MerchantProcesor methodsFor: 'error signal' stamp: 'EEDP 2/18/2021 15:13:08'!
-invalidCreditCardNumber
-	
-	self error: self invalidCreditCardNumberErrorDescription.! !
-
-!MerchantProcesor methodsFor: 'error signal' stamp: 'EEDP 2/18/2021 15:16:07'!
-invalidCreditCardOwner
-	
-	self error: self invalidCreditCardOwnerErrorDescription.! !
-
 !MerchantProcesor methodsFor: 'error signal' stamp: 'EEDP 2/18/2021 14:58:23'!
 signalEmptyCartError
 	
 	self error: self emptyCartErrorDescription.! !
+
+!MerchantProcesor methodsFor: 'error signal' stamp: 'EEDP 2/18/2021 16:36:30'!
+signalInvalidCreditCardExpirationDateError
+	
+	self error: self invalidCreditCardExpirationDateErrorDescription.! !
+
+!MerchantProcesor methodsFor: 'error signal' stamp: 'EEDP 2/18/2021 16:36:39'!
+signalInvalidCreditCardNumberError
+	
+	self error: self invalidCreditCardNumberErrorDescription.! !
+
+!MerchantProcesor methodsFor: 'error signal' stamp: 'EEDP 2/18/2021 16:37:00'!
+signalInvalidCreditCardOwnerError
+	
+	self error: self invalidCreditCardOwnerErrorDescription.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
