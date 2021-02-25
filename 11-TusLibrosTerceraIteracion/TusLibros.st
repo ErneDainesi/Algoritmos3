@@ -247,7 +247,7 @@ test01CreditCardOwnerNameCannotBeBlank
 
 !classDefinition: #TusLibrosSalesSystemTest category: 'TusLibros'!
 TestCase subclass: #TusLibrosSalesSystemTest
-	instanceVariableNames: ''
+	instanceVariableNames: 'salesSystem publisherObjectsFactory'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
@@ -275,26 +275,29 @@ assert: aBlockExpectedToFail raisesError: excpectedErrorMessage
 	].! !
 
 
-!TusLibrosSalesSystemTest methodsFor: 'tests' stamp: 'EEDP 2/24/2021 13:33:35'!
-test01CannotCreateCartWithInvalidId
+!TusLibrosSalesSystemTest methodsFor: 'tests' stamp: 'EEDP 2/25/2021 16:05:17'!
+setUp
 
-	| salesSystem invalidId password clock |
+	| clock |
 	
 	clock := ClockSimulator initialize.
 	salesSystem := TusLibrosSalesSystem withUsers: self aGroupOfUsers withClock: clock.
+	publisherObjectsFactory := PublisherTestObjectsFactory new.! !
+
+!TusLibrosSalesSystemTest methodsFor: 'tests' stamp: 'EEDP 2/25/2021 16:04:49'!
+test01CannotCreateCartWithInvalidId
+
+	| invalidId password |
 	
 	invalidId := '1234'.
 	password  := '4321'.
 	
 	self assert: [ salesSystem createCartFor: invalidId withPassword: password. ] raisesError: salesSystem invalidCredentialsErrorDescription.! !
 
-!TusLibrosSalesSystemTest methodsFor: 'tests' stamp: 'EEDP 2/24/2021 13:33:36'!
+!TusLibrosSalesSystemTest methodsFor: 'tests' stamp: 'EEDP 2/25/2021 16:04:49'!
 test02NewlyCreatedCartIsEmpty
 
-	| salesSystem validId password clock |
-	
-	clock := ClockSimulator initialize.
-	salesSystem := TusLibrosSalesSystem withUsers: self aGroupOfUsers withClock: clock.
+	| validId password |
 	
 	validId := 'John Lennon'.
 	password  := '1234'.
@@ -303,58 +306,37 @@ test02NewlyCreatedCartIsEmpty
 	
 	self assert: (salesSystem listCart: 1) isEmpty.! !
 
-!TusLibrosSalesSystemTest methodsFor: 'tests' stamp: 'EEDP 2/24/2021 13:33:36'!
+!TusLibrosSalesSystemTest methodsFor: 'tests' stamp: 'EEDP 2/25/2021 16:05:17'!
 test03CanAddToCartOneBook
 
-	| salesSystem validId password objectsFactory listedCart clock |
-	
-	clock := ClockSimulator initialize.
-	salesSystem := TusLibrosSalesSystem withUsers: self aGroupOfUsers withClock: clock.
-	
-	objectsFactory := PublisherTestObjectsFactory new.
+	| validId password listedCart |
 	
 	validId := 'John Lennon'.
 	password  := '1234'.
 	
 	salesSystem createCartFor: validId withPassword: password.
 	
-	salesSystem addToCart: 1 book: objectsFactory bookFromTheEditorial quantity: 1.
+	salesSystem addToCart: 1 book: publisherObjectsFactory bookFromTheEditorial quantity: 1.
 	
 	listedCart := salesSystem listCart: 1.
 	
-	self assert: listedCart includes: objectsFactory bookFromTheEditorial.
-	self assert: (listedCart occurrencesOf: objectsFactory bookFromTheEditorial) equals: 1.! !
+	self assert: listedCart includes: publisherObjectsFactory bookFromTheEditorial.
+	self assert: (listedCart occurrencesOf: publisherObjectsFactory bookFromTheEditorial) equals: 1.! !
 
-!TusLibrosSalesSystemTest methodsFor: 'tests' stamp: 'EEDP 2/24/2021 13:33:36'!
+!TusLibrosSalesSystemTest methodsFor: 'tests' stamp: 'EEDP 2/25/2021 16:05:17'!
 test04CannotAddToAnInvalidCart
 
-	| salesSystem objectsFactory clock |
-	
-	clock := ClockSimulator initialize.
-	salesSystem := TusLibrosSalesSystem withUsers: self aGroupOfUsers withClock: clock.
-	
-	objectsFactory := PublisherTestObjectsFactory new.
+	self assert: [ salesSystem addToCart: 1 book: publisherObjectsFactory bookFromTheEditorial quantity: 1. ] raisesError: salesSystem invalidCartErrorDescription.! !
 
-	self assert: [ salesSystem addToCart: 1 book: objectsFactory bookFromTheEditorial quantity: 1. ] raisesError: salesSystem invalidCartErrorDescription.! !
-
-!TusLibrosSalesSystemTest methodsFor: 'tests' stamp: 'EEDP 2/24/2021 13:33:36'!
+!TusLibrosSalesSystemTest methodsFor: 'tests' stamp: 'EEDP 2/25/2021 16:04:49'!
 test05CannotListAnInvalidCart
-
-	| salesSystem clock |
-	
-	clock := ClockSimulator initialize.
-	salesSystem := TusLibrosSalesSystem withUsers: self aGroupOfUsers withClock: clock.
 
 	self assert: [ salesSystem listCart: 1.] raisesError: salesSystem invalidCartErrorDescription.! !
 
-!TusLibrosSalesSystemTest methodsFor: 'tests' stamp: 'EEDP 2/24/2021 13:33:36'!
+!TusLibrosSalesSystemTest methodsFor: 'tests' stamp: 'EEDP 2/25/2021 16:05:17'!
 test06DifferrentCartsAreCreatedWithDifferentIds
 
-	| salesSystem password johnLennon leoPisculichi objectsFactory leoPisculichiCart johnLennonCart clock |
-	
-	clock := ClockSimulator initialize.
-	salesSystem := TusLibrosSalesSystem withUsers: self aGroupOfUsers withClock: clock.
-	objectsFactory := PublisherTestObjectsFactory new.
+	| password johnLennon leoPisculichi leoPisculichiCart johnLennonCart |
 	
 	johnLennon := 'John Lennon'.
 	leoPisculichi := 'Leonardo Pisculichi'.
@@ -363,80 +345,66 @@ test06DifferrentCartsAreCreatedWithDifferentIds
 	salesSystem createCartFor: johnLennon withPassword: password.
 	salesSystem createCartFor: leoPisculichi withPassword: password.
 	
-	salesSystem addToCart: 2 book: objectsFactory bookFromTheEditorial quantity: 1.
+	salesSystem addToCart: 2 book: publisherObjectsFactory bookFromTheEditorial quantity: 1.
 	
 	johnLennonCart := salesSystem listCart: 1.
 	leoPisculichiCart := salesSystem listCart: 2.
 	
-	self assert: leoPisculichiCart includes: objectsFactory bookFromTheEditorial.
+	self assert: leoPisculichiCart includes: publisherObjectsFactory bookFromTheEditorial.
 	self assert: johnLennonCart isEmpty.! !
 
-!TusLibrosSalesSystemTest methodsFor: 'tests' stamp: 'EEDP 2/24/2021 13:33:36'!
+!TusLibrosSalesSystemTest methodsFor: 'tests' stamp: 'EEDP 2/25/2021 16:05:17'!
 test07CanCheckOutAValidCartWithOneBook
 	
-	| salesSystem validId password objectsFactory expirationDate listOfPurchases clock |
+	| validId password expirationDate listOfPurchases |
 	
-	clock := ClockSimulator initialize.
-	salesSystem := TusLibrosSalesSystem withUsers: self aGroupOfUsers withClock: clock.
-	objectsFactory := PublisherTestObjectsFactory new.
 	listOfPurchases := OrderedCollection with: 100 * peso with: 'ABC123 1'.
 	
 	validId := 'Guido Kaczka'.
 	password  := '1234'.
 	
 	salesSystem createCartFor: validId withPassword: password.
-	salesSystem addToCart: 1 book: objectsFactory bookFromTheEditorial quantity: 1.
+	salesSystem addToCart: 1 book: publisherObjectsFactory bookFromTheEditorial quantity: 1.
 	expirationDate := (FixedGregorianDate today next: GregorianMonth oneMonth) monthOfYear.
 	
 	salesSystem checkOutCart: 1 creditCardNumber: 11111111 creditCardExpirationDate: expirationDate creditCardOwner: validId.
 	
 	self assert: (salesSystem listPurchasesOf: validId withPassword: password) equals: listOfPurchases.! !
 
-!TusLibrosSalesSystemTest methodsFor: 'tests' stamp: 'EEDP 2/24/2021 13:33:36'!
+!TusLibrosSalesSystemTest methodsFor: 'tests' stamp: 'EEDP 2/25/2021 16:05:17'!
 test08CanCheckOutAValidCartWithManyBooks
 	
-	| salesSystem validId password objectsFactory expirationDate listOfPurchases clock |
-	
-	clock := ClockSimulator initialize.
-	salesSystem := TusLibrosSalesSystem withUsers: self aGroupOfUsers withClock: clock.
-	objectsFactory := PublisherTestObjectsFactory new.
+	| validId password expirationDate listOfPurchases |
+
 	listOfPurchases := OrderedCollection with: 200 * peso with: 'ABC123 2'.
 	
 	validId := 'Guido Kaczka'.
 	password  := '1234'.
 	
 	salesSystem createCartFor: validId withPassword: password.
-	salesSystem addToCart: 1 book: objectsFactory bookFromTheEditorial quantity: 2.
+	salesSystem addToCart: 1 book: publisherObjectsFactory bookFromTheEditorial quantity: 2.
 	expirationDate := (FixedGregorianDate today next: GregorianMonth oneMonth) monthOfYear.
 	
 	salesSystem checkOutCart: 1 creditCardNumber: 11111111 creditCardExpirationDate: expirationDate creditCardOwner: validId.
 	
 	self assert: (salesSystem listPurchasesOf: validId withPassword: password) equals: listOfPurchases.! !
 
-!TusLibrosSalesSystemTest methodsFor: 'tests' stamp: 'EEDP 2/24/2021 13:33:36'!
+!TusLibrosSalesSystemTest methodsFor: 'tests' stamp: 'EEDP 2/25/2021 16:04:49'!
 test09CannotCheckOutInvalidCart
 	
-	| salesSystem validId expirationDate clock |
-	
-	clock := ClockSimulator initialize.
-	salesSystem := TusLibrosSalesSystem withUsers: self aGroupOfUsers withClock: clock.
+	| validId expirationDate |
 	
 	validId := 'Guido Kaczka'.
 
 	expirationDate := (FixedGregorianDate today next: GregorianMonth oneMonth) monthOfYear.
 	
-	
 	self assert: [	salesSystem checkOutCart: 1 creditCardNumber: 11111111 creditCardExpirationDate: expirationDate creditCardOwner: validId.]
 	      raisesError: salesSystem invalidCartErrorDescription.! !
 
-!TusLibrosSalesSystemTest methodsFor: 'tests' stamp: 'EEDP 2/24/2021 13:33:36'!
+!TusLibrosSalesSystemTest methodsFor: 'tests' stamp: 'EEDP 2/25/2021 16:05:17'!
 test10CartExpiresAfterIdlingFor30Minutes
 
-	| salesSystem johnLennon password clock publisherObjectFactory |
-	
-	publisherObjectFactory := PublisherTestObjectsFactory new.
-	clock := ClockSimulator initialize.
-	salesSystem := TusLibrosSalesSystem withUsers: self aGroupOfUsers withClock: clock.
+	| johnLennon password |
 	
 	johnLennon := 'John Lennon'.
 	password := '1234'.
@@ -444,28 +412,22 @@ test10CartExpiresAfterIdlingFor30Minutes
 	salesSystem createCartFor: johnLennon withPassword: password.
 	salesSystem forwardClock: (Duration minutes: 30).
 	
-	self assert: [salesSystem addToCart: 1 book: publisherObjectFactory bookFromTheEditorial quantity: 1 ] raisesError: salesSystem cartHasExpiredErrorDescription.
-	
+	self assert: [salesSystem addToCart: 1 book: publisherObjectsFactory bookFromTheEditorial quantity: 1 ] raisesError: salesSystem cartHasExpiredErrorDescription.
 	! !
 
-!TusLibrosSalesSystemTest methodsFor: 'tests' stamp: 'EEDP 2/24/2021 13:33:36'!
+!TusLibrosSalesSystemTest methodsFor: 'tests' stamp: 'EEDP 2/25/2021 16:05:17'!
 test11CanCheckOutCartEvenIfSumOfIdilingIs30Minutes
 
-	| salesSystem johnLennon password clock publisherObjectFactory expirationDate listOfPurchases |
+	| johnLennon password expirationDate listOfPurchases |
 	
-	publisherObjectFactory := PublisherTestObjectsFactory new.
-	clock := ClockSimulator initialize.
-	
-	salesSystem := TusLibrosSalesSystem withUsers: self aGroupOfUsers withClock: clock.
 	listOfPurchases := OrderedCollection with: 100 * peso with: 'ABC123 1'.
-	
 	
 	johnLennon := 'John Lennon'.
 	password := '1234'.
 	
 	salesSystem createCartFor: johnLennon withPassword: password.
 	salesSystem forwardClock: (Duration minutes: 15).
-	salesSystem addToCart: 1 book: publisherObjectFactory bookFromTheEditorial quantity: 1.
+	salesSystem addToCart: 1 book: publisherObjectsFactory bookFromTheEditorial quantity: 1.
 	salesSystem forwardClock: (Duration minutes: 15).
 
 	expirationDate := (FixedGregorianDate today next: GregorianMonth oneMonth) monthOfYear.
